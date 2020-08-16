@@ -61,6 +61,10 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
             search
                     .filter("obj.author", Parameters.with("author", get("obj.author")));
         }
+        if (nn("obj.developer_uuid")) {
+            search
+                    .filter("obj.developer_uuid", Parameters.with("developer_uuid", get("obj.developer_uuid")));
+        }
         return search;
     }
 

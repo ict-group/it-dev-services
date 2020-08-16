@@ -25,6 +25,9 @@ import java.time.LocalDateTime;
 @FilterDef(name = "obj.author", parameters = @ParamDef(name = "author", type = "string"))
 @Filter(name = "obj.author", condition = "author = :author")
 
+@FilterDef(name = "obj.developer_uuid", parameters = @ParamDef(name = "developer_uuid", type = "string"))
+@Filter(name = "obj.developer_uuid", condition = "developer_uuid = :developer_uuid")
+
 public class BlogPost extends PanacheEntityBase {
 
     @Id
@@ -35,6 +38,8 @@ public class BlogPost extends PanacheEntityBase {
     public String content;
     public String tags;
     public String author;
+    public String video_url;
+    public String developer_uuid;
 
     public LocalDateTime insert_date;
     public LocalDateTime update_date;
@@ -51,6 +56,8 @@ public class BlogPost extends PanacheEntityBase {
                 ", content='" + content + '\'' +
                 ", tags='" + tags + '\'' +
                 ", author='" + author + '\'' +
+                ", developer_uuid='" + developer_uuid + '\'' +
+                ", video_url='" + video_url + '\'' +
                 ", insert_date=" + insert_date +
                 ", update_date=" + update_date +
                 '}';
