@@ -1,16 +1,19 @@
 package dev.it.services.model;
 
+import dev.it.services.model.pojo.PropertyValue;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.*;
+import org.lorislab.quarkus.hibernate.types.json.JsonBinaryType;
+import org.lorislab.quarkus.hibernate.types.json.JsonTypes;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "projects")
-//@TypeDef(name = JsonTypes.JSON_BIN, typeClass = JsonBinaryType.class)
+@TypeDef(name = JsonTypes.JSON_BIN, typeClass = JsonBinaryType.class)
 
 @FilterDef(name = "obj.uuid", parameters = @ParamDef(name = "uuid", type = "string"))
 @Filter(name = "obj.uuid", condition = "uuid = :uuid")
@@ -39,9 +42,9 @@ public class Project extends PanacheEntityBase {
     public String description;
     public String tags;
 
-//    @Type(type = "jsonb")
-//    @Column(columnDefinition = "jsonb")
-//    public List<PropertyValue> properties;
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+    public List<PropertyValue> properties;
 
     public Project() {
     }

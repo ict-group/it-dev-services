@@ -18,8 +18,6 @@ import javax.persistence.Table;
 
 @FilterDef(name = "obj.table_key", parameters = @ParamDef(name = "table_key", type = "string"))
 @Filter(name = "obj.table_key", condition = "table_key = :table_key")
-
-
 public class Attachment extends PanacheEntityBase {
 
     @Id

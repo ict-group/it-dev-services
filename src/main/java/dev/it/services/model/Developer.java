@@ -1,14 +1,17 @@
 package dev.it.services.model;
 
+import dev.it.services.model.pojo.PropertyValue;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.*;
+import org.lorislab.quarkus.hibernate.types.json.JsonBinaryType;
+import org.lorislab.quarkus.hibernate.types.json.JsonTypes;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "developers")
@@ -33,7 +36,7 @@ import java.util.Date;
 @FilterDef(name = "to.birthdate", parameters = @ParamDef(name = "birthdate", type = "string"))
 @Filter(name = "to.birthdate", condition = "birthdate <= :birthdate")
 
-//@TypeDef(name = JsonTypes.JSON_BIN, typeClass = JsonBinaryType.class)
+@TypeDef(name = JsonTypes.JSON_BIN, typeClass = JsonBinaryType.class)
 public class Developer extends PanacheEntityBase {
 
     @Id
@@ -48,9 +51,9 @@ public class Developer extends PanacheEntityBase {
     public String photo_url;
     public Date birthdate;
 
-//    @Type(type = "jsonb")
-//    @Column(columnDefinition = "jsonb")
-//    public List<PropertyValue> properties;
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+    public List<PropertyValue> properties;
 
     public Date creation_date;
 
