@@ -27,3 +27,7 @@ jobs:
       
       - name: Maven Package
         run: mvn clean package -Pnative -Dquarkus.native.container-build=true -DskipTests=true
+      - name: Publish Image
+        uses: matootie/github-docker@v3.0.0
+        with:
+          accessToken: ${{ github.token }}
