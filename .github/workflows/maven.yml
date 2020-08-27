@@ -31,3 +31,5 @@ jobs:
         uses: matootie/github-docker@v3.0.0
         with:
           accessToken: ${{ github.token }}
+          context: src/main/docker/
+          contextName: Dockerfile.native
