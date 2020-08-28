@@ -1,8 +1,9 @@
 name: Amazon AWS Replace Task
 
 on:
-  package:
-    types: [updated,published]
+  workflow_run:
+    workflow: Maven & Docker
+    status: complete
 
 jobs:
   build:
