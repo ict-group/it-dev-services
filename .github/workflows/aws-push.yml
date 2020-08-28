@@ -6,11 +6,11 @@ on:
 
 jobs:
   build:
-    name: Test - Units & Integrations
+    name: Download task definition
     runs-on: ubuntu-latest
     
     steps:
-      - name: Login to Amazon ECR
+      - name: Login to Amazon ECR & Deploy Amazon ECS
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
