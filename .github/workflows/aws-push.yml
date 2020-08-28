@@ -1,0 +1,35 @@
+name: Amazon AWS Replace Task
+
+on:
+  registry_package:
+    types: [published]
+
+jobs:
+  build:
+    name: Test - Units & Integrations
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition it-dev-services --query taskDefinition > task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: it-dev-services
+          image: docker.pkg.github.com/ict-group/it-dev-services/it-dev-services:latest
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: it-dev-services
+          cluster: it-IT
+          wait-for-service-stability: true
