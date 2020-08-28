@@ -1,8 +1,8 @@
 name: Amazon AWS Replace Task
 
 on:
-  registry_package:
-    types: [updated]
+  package:
+    types: [updated,published]
 
 jobs:
   build:
