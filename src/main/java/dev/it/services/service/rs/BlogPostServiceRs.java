@@ -12,14 +12,14 @@ import io.quarkus.panache.common.Sort;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Path(AppConstants.BLOGPOSTS_PATH)
 @Produces(MediaType.APPLICATION_JSON)
@@ -103,6 +103,27 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
     @Override
     protected void postUpdate(BlogPost blogPost) throws Exception {
 
-        saveOrUpdateTagsForBlogpost(blogPost);
+        //Still to fix how to get the record without getting merged
+        BlogPost existingBlogPost = BlogPost.findById(blogPost.uuid);
+
+        if(existingBlogPost.tags.equals(blogPost.tags)) {
+
+            String[] existingTags = existingBlogPost.tags.split(",");
+
+            String[] newTags = blogPost.tags.split(",");
+
+            //Create two list one for persisting and one for removing
+            Collection<String> similar = new HashSet(Arrays.asList(existingTags));
+            similar.retainAll(Arrays.asList(newTags));
+
+            Collection<String> toRemoveTags = new HashSet<>(Arrays.asList(existingTags));
+            Collection<String> newTagsSet = new HashSet<>(Arrays.asList(newTags));
+
+            toRemoveTags.removeAll(similar);
+            newTagsSet.removeAll(similar);
+
+            newTagsSet.stream().forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), true)));
+            toRemoveTags.stream().forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), false)));
+        }
     }
 }

@@ -18,13 +18,13 @@ public class TagService {
         if(event.isAdded()){
 
             logger.error("ADDED");
+            saveOrUpdateTag(event.getTag());
         }
         else {
 
             logger.error("REMOVED");
+            removeOrUpdateTag(event.getTag());
         }
-
-//        saveOrUpdateTag(tagName);
     }
 
     private void saveOrUpdateTag(String tagName){
@@ -59,5 +59,18 @@ public class TagService {
         logger.info("update");
 
         tag.numberOf++;
+
+    }
+
+    private void removeOrUpdateTag(String tagName){
+
+        Tag tag = Tag.find("name", tagName).firstResult();
+
+        tag.numberOf--;
+
+        if(tag.numberOf == 0){
+
+            tag.delete();
+        }
     }
 }
