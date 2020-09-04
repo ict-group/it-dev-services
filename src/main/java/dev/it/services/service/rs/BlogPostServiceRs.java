@@ -3,18 +3,23 @@ package dev.it.services.service.rs;
 import dev.it.api.service.RsRepositoryServiceV3;
 import dev.it.services.management.AppConstants;
 import dev.it.services.model.BlogPost;
-import dev.it.services.model.Developer;
 import dev.it.services.service.S3Service;
+import dev.it.services.service.TagEvent;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Path(AppConstants.BLOGPOSTS_PATH)
 @Produces(MediaType.APPLICATION_JSON)
@@ -24,6 +29,9 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
 
     @Inject
     S3Service s3Service;
+
+    @Inject
+    Event tagEvent;
 
     public BlogPostServiceRs() {
         super(BlogPost.class);
@@ -68,4 +76,33 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
         return search;
     }
 
+    @Override
+    protected void postPersist(BlogPost blogPost) throws Exception {
+
+        saveOrUpdateTagsForBlogpost(blogPost);
+    }
+
+    private void saveOrUpdateTagsForBlogpost(BlogPost blogPost) throws Exception {
+
+        if(blogPost != null){
+
+            if(blogPost.tags == null){
+
+                logger.errorv("Blogpost should have it's corresponding tags.");
+                //maybe throw an exception (NoTagsForBlogpostException) ? and catch it with a exception mapper ?
+            }
+            else{
+
+                String[] tags = blogPost.tags.split(",");
+
+                Arrays.stream(tags).forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), true)));
+            }
+        }
+    }
+
+    @Override
+    protected void postUpdate(BlogPost blogPost) throws Exception {
+
+        saveOrUpdateTagsForBlogpost(blogPost);
+    }
 }
