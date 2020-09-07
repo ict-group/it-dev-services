@@ -12,9 +12,6 @@ import io.quarkus.panache.common.Sort;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -32,6 +29,8 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
 
     @Inject
     Event tagEvent;
+
+    private String oldTags;
 
     public BlogPostServiceRs() {
         super(BlogPost.class);
@@ -101,29 +100,38 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
     }
 
     @Override
-    protected void postUpdate(BlogPost blogPost) throws Exception {
+    protected BlogPost preUpdate(BlogPost blogPost) throws Exception {
 
-        //Still to fix how to get the record without getting merged
         BlogPost existingBlogPost = BlogPost.findById(blogPost.uuid);
 
-        if(existingBlogPost.tags.equals(blogPost.tags)) {
+        oldTags = existingBlogPost.tags;
 
-            String[] existingTags = existingBlogPost.tags.split(",");
+        return super.preUpdate(blogPost);
+    }
+
+    @Override
+    protected void postUpdate(BlogPost blogPost) throws Exception {
+
+        if(!oldTags.equals(blogPost.tags)) {
+
+            String[] existingTags = oldTags.split(",");
 
             String[] newTags = blogPost.tags.split(",");
 
-            //Create two list one for persisting and one for removing
+            //Find the similar elements that will not be touched
             Collection<String> similar = new HashSet(Arrays.asList(existingTags));
             similar.retainAll(Arrays.asList(newTags));
 
+            //Remove all tags removed from blogspot
             Collection<String> toRemoveTags = new HashSet<>(Arrays.asList(existingTags));
-            Collection<String> newTagsSet = new HashSet<>(Arrays.asList(newTags));
-
             toRemoveTags.removeAll(similar);
-            newTagsSet.removeAll(similar);
-
-            newTagsSet.stream().forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), true)));
             toRemoveTags.stream().forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), false)));
+
+            //Add all tags added to blogspot
+            Collection<String> newTagsSet = new HashSet<>(Arrays.asList(newTags));
+            newTagsSet.removeAll(similar);
+            newTagsSet.stream().forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), true)));
         }
     }
+
 }
