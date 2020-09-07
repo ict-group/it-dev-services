@@ -119,16 +119,16 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
             String[] newTags = blogPost.tags.split(",");
 
             //Find the similar elements that will not be touched
-            Collection<String> similar = new HashSet(Arrays.asList(existingTags));
+            Set<String> similar = new HashSet(Arrays.asList(existingTags));
             similar.retainAll(Arrays.asList(newTags));
 
             //Remove all tags removed from blogspot
-            Collection<String> toRemoveTags = new HashSet<>(Arrays.asList(existingTags));
+            Set<String> toRemoveTags = new HashSet<>(Arrays.asList(existingTags));
             toRemoveTags.removeAll(similar);
             toRemoveTags.stream().forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), false)));
 
             //Add all tags added to blogspot
-            Collection<String> newTagsSet = new HashSet<>(Arrays.asList(newTags));
+            Set<String> newTagsSet = new HashSet<>(Arrays.asList(newTags));
             newTagsSet.removeAll(similar);
             newTagsSet.stream().forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), true)));
         }
