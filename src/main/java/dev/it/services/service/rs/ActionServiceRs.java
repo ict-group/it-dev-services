@@ -64,6 +64,15 @@ public class ActionServiceRs extends RsRepositoryServiceV3<Action, String> {
     @Override
     protected void prePersist(Action action) throws Exception {
 
-        action.uuid = TableKeyUtils.createSlug(action.name);
+        String generatedUuid = TableKeyUtils.createSlug(action.name);
+
+        if(Action.findById(generatedUuid) != null){
+
+            logger.error("Generated Uuid : " + generatedUuid + " already exists!");
+
+            throw new IllegalArgumentException("'" + action.name + "' ");
+        }
+
+        action.uuid = generatedUuid;
     }
 }
