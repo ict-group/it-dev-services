@@ -7,7 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "performed_actions")
@@ -17,6 +17,12 @@ import java.time.LocalDateTime;
 
 @FilterDef(name = "obj.user_uuid", parameters = @ParamDef(name = "user_uuid", type = "string"))
 @Filter(name = "obj.user_uuid", condition = "user_uuid = :user_uuid")
+
+//@FilterDef(name = "from.creation_date", parameters = @ParamDef(name = "creation_date", type = "string"))
+//@Filter(name = "from.creation_date", condition = "creation_date >= :creation_date")
+//
+//@FilterDef(name = "to.creation_date", parameters = @ParamDef(name = "creation_date", type = "string"))
+//@Filter(name = "to.creation_date", condition = "creation_date <= :creation_date")
 
 public class PerformedAction extends PanacheEntityBase {
 
@@ -32,11 +38,10 @@ public class PerformedAction extends PanacheEntityBase {
 
     public String user_uuid;
 
-    public LocalDateTime creation_date;
+    public LocalDate creation_date;
 
-    public LocalDateTime working_date;
+    public LocalDate working_date;
 
     public PerformedAction() {
     }
-
 }

@@ -15,6 +15,7 @@ public final class AppConstants {
     public static final String USERS_PATH = API_PATH + "/users";
     public static final String ACTIONS_PATH = API_PATH + "/actions";
     public static final String PERFORMED_ACTIONS_PATH = API_PATH + "/performed-actions";
+    public static final String PERFORMED_ACTIONS_BLOGPOSTS_PATH = API_PATH + "/performed-actions-blogposts";
 
     // COSTANTI PER LEGGERE FileUploadRest
     public static final String UPLOAD_FILE = "file";

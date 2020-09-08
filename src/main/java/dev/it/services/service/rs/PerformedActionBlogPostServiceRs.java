@@ -1,10 +1,9 @@
 package dev.it.services.service.rs;
 
 import dev.it.api.service.RsRepositoryServiceV3;
-import dev.it.api.util.DateUtils;
 import dev.it.services.management.AppConstants;
 import dev.it.services.model.BlogPost;
-import dev.it.services.model.PerformedAction;
+import dev.it.services.model.PerformedActionBlogPost;
 import dev.it.services.service.S3Service;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Parameters;
@@ -16,21 +15,19 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.time.LocalDate;
-import java.util.Date;
 
-@Path(AppConstants.PERFORMED_ACTIONS_PATH)
+@Path(AppConstants.PERFORMED_ACTIONS_BLOGPOSTS_PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Singleton
-public class PerformedActionServiceRs extends RsRepositoryServiceV3<PerformedAction, String> {
+public class PerformedActionBlogPostServiceRs extends RsRepositoryServiceV3<PerformedActionBlogPost, String> {
 
     @Inject
     S3Service s3Service;
 
 
-    public PerformedActionServiceRs() {
-        super(PerformedAction.class);
+    public PerformedActionBlogPostServiceRs() {
+        super(PerformedActionBlogPost.class);
     }
 
 
@@ -41,15 +38,15 @@ public class PerformedActionServiceRs extends RsRepositoryServiceV3<PerformedAct
 
 
     @Override
-    public PanacheQuery<PerformedAction> getSearch(String orderBy) throws Exception {
+    public PanacheQuery<PerformedActionBlogPost> getSearch(String orderBy) throws Exception {
 
-        PanacheQuery<PerformedAction> search;
+        PanacheQuery<PerformedActionBlogPost> search;
         Sort sort = sort(orderBy);
 
         if (sort != null) {
-            search = BlogPost.find("select a from PerformedAction a", sort);
+            search = BlogPost.find("select a from PerformedActionBlogPost a", sort);
         } else {
-            search = BlogPost.find("select a from PerformedAction a");
+            search = BlogPost.find("select a from PerformedActionBlogPost a");
         }
         if (nn("obj.blogpost_uuid")) {
             search
@@ -72,11 +69,5 @@ public class PerformedActionServiceRs extends RsRepositoryServiceV3<PerformedAct
 //        }
 
         return search;
-    }
-
-    @Override
-    protected void prePersist(PerformedAction performedAction) throws Exception {
-
-        performedAction.creation_date = LocalDate.now();
     }
 }
