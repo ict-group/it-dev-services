@@ -1,6 +1,7 @@
 package dev.it.services.service.rs;
 
 import dev.it.api.service.RsRepositoryServiceV3;
+import dev.it.api.util.TableKeyUtils;
 import dev.it.services.management.AppConstants;
 import dev.it.services.model.Action;
 import dev.it.services.model.BlogPost;
@@ -44,9 +45,9 @@ public class ActionServiceRs extends RsRepositoryServiceV3<Action, String> {
         Sort sort = sort(orderBy);
 
         if (sort != null) {
-            search = BlogPost.find("select a from BlogPost a", sort);
+            search = BlogPost.find("select a from Action a", sort);
         } else {
-            search = BlogPost.find("select a from BlogPost a");
+            search = BlogPost.find("select a from Action a");
         }
         if (nn("obj.name")) {
             search
@@ -58,5 +59,11 @@ public class ActionServiceRs extends RsRepositoryServiceV3<Action, String> {
         }
 
         return search;
+    }
+
+    @Override
+    protected void prePersist(Action action) throws Exception {
+
+        action.uuid = TableKeyUtils.createSlug(action.name);
     }
 }

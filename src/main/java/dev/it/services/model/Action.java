@@ -19,9 +19,6 @@ import javax.persistence.*;
 
 public class Action extends PanacheEntityBase {
 
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @Column(name = "uuid", unique = true, length = 100)
     @Id
     public String uuid;
 
@@ -29,8 +26,11 @@ public class Action extends PanacheEntityBase {
 
     public String icon;
 
-    public String operationToExecute;
+    public long operationToExecute;
 
     public Action() {
+
+        this.operationToExecute = 1l;
     }
+
 }
