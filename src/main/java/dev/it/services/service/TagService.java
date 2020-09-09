@@ -1,6 +1,7 @@
 package dev.it.services.service;
 
 import dev.it.services.model.Tag;
+import dev.it.services.service.events.TagEvent;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;

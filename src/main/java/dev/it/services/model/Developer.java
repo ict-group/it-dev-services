@@ -50,6 +50,7 @@ public class Developer extends PanacheEntityBase {
     public String lastCompany;
     public String photo_url;
     public Date birthdate;
+    public String companies;
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
@@ -72,6 +73,8 @@ public class Developer extends PanacheEntityBase {
                 ", lastCompany='" + lastCompany + '\'' +
                 ", photo_url='" + photo_url + '\'' +
                 ", birthdate=" + birthdate +
+                ", companies='" + companies + '\'' +
+                ", properties=" + properties +
                 ", creation_date=" + creation_date +
                 '}';
     }

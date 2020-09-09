@@ -1,4 +1,4 @@
-package dev.it.services.service;
+package dev.it.services.service.events;
 
 public class TagEvent {
 
