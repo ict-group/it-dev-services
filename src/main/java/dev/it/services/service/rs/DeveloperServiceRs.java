@@ -25,9 +25,6 @@ import java.util.Date;
 @Singleton
 public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String> {
 
-    @Inject
-    S3Service s3Service;
-
     public DeveloperServiceRs() {
         super(Developer.class);
     }
@@ -84,7 +81,8 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         ZoneId defaultZoneId = ZoneId.systemDefault();
 
         //creating the instance of LocalDate using the day, month, year info
-        LocalDate localDate = LocalDate.of(2016, 8, 19);;
+        LocalDate localDate = LocalDate.of(2016, 8, 19);
+        ;
 
         object.birthdate = Date.from(localDate.atStartOfDay(defaultZoneId).toInstant());
     }

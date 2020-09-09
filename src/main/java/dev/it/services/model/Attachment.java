@@ -4,33 +4,45 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
+import org.jboss.resteasy.annotations.providers.multipart.PartType;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.core.MediaType;
+import java.util.Date;
 
 
 @Entity
 @Table(name = "attachments")
 
-@FilterDef(name = "obj.table_name", parameters = @ParamDef(name = "table_name", type = "string"))
-@Filter(name = "obj.table_name", condition = "table_name = :table_name")
+@FilterDef(name = "obj.uuid", parameters = @ParamDef(name = "uuid", type = "string"))
+@Filter(name = "obj.uuid", condition = "uuid = :uuid")
 
-@FilterDef(name = "obj.table_key", parameters = @ParamDef(name = "table_key", type = "string"))
-@Filter(name = "obj.table_key", condition = "table_key = :table_key")
+@FilterDef(name = "like.name", parameters = @ParamDef(name = "name", type = "string"))
+@Filter(name = "like.name", condition = "name LIKE :name")
+
+@FilterDef(name = "from.creation_date", parameters = @ParamDef(name = "creation_date", type = "string"))
+@Filter(name = "from.creation_date", condition = "creation_date >= :creation_date")
+
+@FilterDef(name = "to.creation_date", parameters = @ParamDef(name = "creation_date", type = "string"))
+@Filter(name = "to.creation_date", condition = "creation_date <= :creation_date")
+
 public class Attachment extends PanacheEntityBase {
 
     @Id
     public String uuid;
 
     public String name;
-    public String url;
-    public String message_uuid;
-    public String mimeType;
-    public String size;
+    public String s3name;
 
-    public String table_name;
-    public String table_key;
+    public Date creation_date;
+    public String mime_type;
+    public String s3_url;
+
+    public String external_uuid;
+    public String external_type;
 
     public Attachment() {
     }
@@ -40,12 +52,12 @@ public class Attachment extends PanacheEntityBase {
         return "Attachment{" +
                 "uuid='" + uuid + '\'' +
                 ", name='" + name + '\'' +
-                ", url='" + url + '\'' +
-                ", message_uuid='" + message_uuid + '\'' +
-                ", mimeType='" + mimeType + '\'' +
-                ", size='" + size + '\'' +
-                ", table_name='" + table_name + '\'' +
-                ", table_key='" + table_key + '\'' +
+                ", s3name='" + s3name + '\'' +
+                ", creation_date=" + creation_date +
+                ", mime_type='" + mime_type + '\'' +
+                ", external_type='" + external_type + '\'' +
+                ", external_uuid='" + external_uuid + '\'' +
+                ", s3_url='" + s3_url + '\'' +
                 '}';
     }
 }

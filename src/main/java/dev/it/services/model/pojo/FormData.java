@@ -20,19 +20,12 @@ public class FormData {
     @PartType(MediaType.TEXT_PLAIN)
     public String mimeType;
 
-    @FormParam("document_uuid")
+    @FormParam("external_uuid")
     @PartType(MediaType.TEXT_PLAIN)
-    public String document_uuid;
+    public String external_uuid;
 
-    @FormParam("tags")
+    @FormParam("external_type")
     @PartType(MediaType.TEXT_PLAIN)
-    public String tags;
+    public String external_type;
 
-    @FormParam("group")
-    @PartType(MediaType.TEXT_PLAIN)
-    public String group;
-
-    @FormParam("folder")
-    @PartType(MediaType.TEXT_PLAIN)
-    public String folder;
 }

@@ -22,10 +22,6 @@ import java.time.LocalDateTime;
 @Singleton
 public class PerformedActionBlogPostServiceRs extends RsRepositoryServiceV3<PerformedActionBlogPost, String> {
 
-    @Inject
-    S3Service s3Service;
-
-
     public PerformedActionBlogPostServiceRs() {
         super(PerformedActionBlogPost.class);
     }
