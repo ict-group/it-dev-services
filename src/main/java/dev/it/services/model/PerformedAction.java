@@ -18,11 +18,11 @@ import java.time.LocalDate;
 @FilterDef(name = "obj.user_uuid", parameters = @ParamDef(name = "user_uuid", type = "string"))
 @Filter(name = "obj.user_uuid", condition = "user_uuid = :user_uuid")
 
-//@FilterDef(name = "from.creation_date", parameters = @ParamDef(name = "creation_date", type = "string"))
-//@Filter(name = "from.creation_date", condition = "creation_date >= :creation_date")
-//
-//@FilterDef(name = "to.creation_date", parameters = @ParamDef(name = "creation_date", type = "string"))
-//@Filter(name = "to.creation_date", condition = "creation_date <= :creation_date")
+@FilterDef(name = "from.creation_date", parameters = @ParamDef(name = "creation_date", type = "LocalDate"))
+@Filter(name = "from.creation_date", condition = "creation_date >= :creation_date")
+
+@FilterDef(name = "to.creation_date", parameters = @ParamDef(name = "creation_date", type = "LocalDate"))
+@Filter(name = "to.creation_date", condition = "creation_date <= :creation_date")
 
 public class PerformedAction extends PanacheEntityBase {
 

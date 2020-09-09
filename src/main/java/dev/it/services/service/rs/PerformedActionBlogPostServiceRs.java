@@ -2,7 +2,6 @@ package dev.it.services.service.rs;
 
 import dev.it.api.service.RsRepositoryServiceV3;
 import dev.it.services.management.AppConstants;
-import dev.it.services.model.BlogPost;
 import dev.it.services.model.PerformedActionBlogPost;
 import dev.it.services.service.S3Service;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -15,6 +14,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.time.LocalDateTime;
 
 @Path(AppConstants.PERFORMED_ACTIONS_BLOGPOSTS_PATH)
 @Produces(MediaType.APPLICATION_JSON)
@@ -33,7 +33,7 @@ public class PerformedActionBlogPostServiceRs extends RsRepositoryServiceV3<Perf
 
     @Override
     protected String getDefaultOrderBy() {
-        return " action asc";
+        return " last_update desc";
     }
 
 
@@ -44,9 +44,9 @@ public class PerformedActionBlogPostServiceRs extends RsRepositoryServiceV3<Perf
         Sort sort = sort(orderBy);
 
         if (sort != null) {
-            search = BlogPost.find("select a from PerformedActionBlogPost a", sort);
+            search = PerformedActionBlogPost.find("select a from PerformedActionBlogPost a", sort);
         } else {
-            search = BlogPost.find("select a from PerformedActionBlogPost a");
+            search = PerformedActionBlogPost.find("select a from PerformedActionBlogPost a");
         }
         if (nn("obj.blogpost_uuid")) {
             search
@@ -57,16 +57,21 @@ public class PerformedActionBlogPostServiceRs extends RsRepositoryServiceV3<Perf
                     .filter("obj.user_uuid", Parameters.with("user_uuid", get("obj.user_uuid")));
         }
 
-//        if (nn("from.creation_date")) {
-//            LocalDate date = LocalDate.parse(get("from.creation_date"));
-//            search
-//                    .filter("from.creation_date", Parameters.with("creation_date", date));
-//        }
-//        if (nn("to.creation_date")) {
-////            Date date = DateUtils.parseDate(get("to.creation_date"));
-//            search
-//                    .filter("to.creation_date", Parameters.with("creation_date", DateUtils.toEndOfDay(date)));
-//        }
+        if (nn("from.last_update")) {
+
+            LocalDateTime date = LocalDateTime.parse(get("from.last_update"));
+
+            search
+                    .filter("from.last_update", Parameters.with("last_update", date));
+        }
+
+        if (nn("to.last_update")) {
+
+            LocalDateTime date = LocalDateTime.parse(get("to.last_update"));
+
+            search
+                    .filter("to.last_update", Parameters.with("last_update", date));
+        }
 
         return search;
     }

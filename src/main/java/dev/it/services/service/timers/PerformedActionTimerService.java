@@ -30,10 +30,13 @@ public class PerformedActionTimerService{
         List<PerformedAction> performedActions = (List<PerformedAction>) entityManager.createNativeQuery("select * from performed_actions where working_date is null", PerformedAction.class)
                 .getResultList();
 
-        performedActions.stream()
-                .forEach(performedAction -> elaboratePerformedAction(performedAction));
+        if(performedActions != null){
 
-        logger.info("PerformedActions processed at : " + LocalDateTime.now());
+            performedActions.stream()
+                    .forEach(performedAction -> elaboratePerformedAction(performedAction));
+
+            logger.info("PerformedActions processed at : " + LocalDateTime.now());
+        }
     }
 
     private void elaboratePerformedAction(PerformedAction performedAction) {

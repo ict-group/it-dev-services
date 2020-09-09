@@ -4,7 +4,6 @@ import dev.it.api.service.RsRepositoryServiceV3;
 import dev.it.api.util.TableKeyUtils;
 import dev.it.services.management.AppConstants;
 import dev.it.services.model.Action;
-import dev.it.services.model.BlogPost;
 import dev.it.services.service.S3Service;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Parameters;
@@ -45,9 +44,9 @@ public class ActionServiceRs extends RsRepositoryServiceV3<Action, String> {
         Sort sort = sort(orderBy);
 
         if (sort != null) {
-            search = BlogPost.find("select a from Action a", sort);
+            search = Action.find("select a from Action a", sort);
         } else {
-            search = BlogPost.find("select a from Action a");
+            search = Action.find("select a from Action a");
         }
         if (nn("obj.name")) {
             search

@@ -1,9 +1,7 @@
 package dev.it.services.service.rs;
 
 import dev.it.api.service.RsRepositoryServiceV3;
-import dev.it.api.util.DateUtils;
 import dev.it.services.management.AppConstants;
-import dev.it.services.model.BlogPost;
 import dev.it.services.model.PerformedAction;
 import dev.it.services.service.S3Service;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -17,7 +15,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Path(AppConstants.PERFORMED_ACTIONS_PATH)
 @Produces(MediaType.APPLICATION_JSON)
@@ -47,9 +44,9 @@ public class PerformedActionServiceRs extends RsRepositoryServiceV3<PerformedAct
         Sort sort = sort(orderBy);
 
         if (sort != null) {
-            search = BlogPost.find("select a from PerformedAction a", sort);
+            search = PerformedAction.find("select a from PerformedAction a", sort);
         } else {
-            search = BlogPost.find("select a from PerformedAction a");
+            search = PerformedAction.find("select a from PerformedAction a");
         }
         if (nn("obj.blogpost_uuid")) {
             search
@@ -60,16 +57,20 @@ public class PerformedActionServiceRs extends RsRepositoryServiceV3<PerformedAct
                     .filter("obj.user_uuid", Parameters.with("user_uuid", get("obj.user_uuid")));
         }
 
-//        if (nn("from.creation_date")) {
-//            LocalDate date = LocalDate.parse(get("from.creation_date"));
-//            search
-//                    .filter("from.creation_date", Parameters.with("creation_date", date));
-//        }
-//        if (nn("to.creation_date")) {
-////            Date date = DateUtils.parseDate(get("to.creation_date"));
-//            search
-//                    .filter("to.creation_date", Parameters.with("creation_date", DateUtils.toEndOfDay(date)));
-//        }
+        if (nn("from.creation_date")) {
+
+            LocalDate date = LocalDate.parse(get("from.creation_date"));
+
+            search
+                    .filter("from.creation_date", Parameters.with("creation_date", date));
+        }
+        if (nn("to.creation_date")) {
+
+            LocalDate date = LocalDate.parse(get("to.creation_date"));
+
+            search
+                    .filter("to.creation_date", Parameters.with("creation_date", date));
+        }
 
         return search;
     }

@@ -3,7 +3,6 @@ package dev.it.services.model;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.*;
@@ -26,11 +25,11 @@ public class Action extends PanacheEntityBase {
 
     public String icon;
 
-    public long operationToExecute;
+    public long operation_to_execute;
 
     public Action() {
 
-        this.operationToExecute = 1l;
+        this.operation_to_execute = 1l;
     }
 
 }

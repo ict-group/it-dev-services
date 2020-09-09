@@ -20,6 +20,12 @@ import java.util.List;
 @FilterDef(name = "obj.blogpost_uuid", parameters = @ParamDef(name = "uuid", type = "string"))
 @Filter(name = "obj.blogpost_uuid", condition = "uuid = :uuid")
 
+@FilterDef(name = "from.last_update", parameters = @ParamDef(name = "last_update", type = "LocalDateTime"))
+@Filter(name = "from.last_update", condition = "last_update >= :last_update")
+
+@FilterDef(name = "to.last_update", parameters = @ParamDef(name = "last_update", type = "LocalDateTime"))
+@Filter(name = "to.last_update", condition = "last_update <= :last_update")
+
 @TypeDef(name = JsonTypes.JSON_BIN, typeClass = JsonBinaryType.class)
 public class PerformedActionBlogPost extends PanacheEntityBase {
 
