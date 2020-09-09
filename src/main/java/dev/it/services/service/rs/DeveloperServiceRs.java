@@ -15,6 +15,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Path(AppConstants.DEVELOPERS_PATH)
@@ -75,4 +77,15 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         return search;
     }
 
+    @Override
+    protected void prePersist(Developer object) throws Exception {
+
+        //default time zone
+        ZoneId defaultZoneId = ZoneId.systemDefault();
+
+        //creating the instance of LocalDate using the day, month, year info
+        LocalDate localDate = LocalDate.of(2016, 8, 19);;
+
+        object.birthdate = Date.from(localDate.atStartOfDay(defaultZoneId).toInstant());
+    }
 }
