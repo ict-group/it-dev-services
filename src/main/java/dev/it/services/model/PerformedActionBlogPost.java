@@ -11,16 +11,14 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "performed_action_blog_post")
 
-@FilterDef(name = "obj.blogpost_uuid", parameters = @ParamDef(name = "blogpost_uuid", type = "string"))
-@Filter(name = "obj.blogpost_uuid", condition = "blogpost_uuid = :blogpost_uuid")
-
-@FilterDef(name = "obj.user_uuid", parameters = @ParamDef(name = "user_uuid", type = "string"))
-@Filter(name = "obj.user_uuid", condition = "user_uuid = :user_uuid")
+@FilterDef(name = "obj.blogpost_uuid", parameters = @ParamDef(name = "uuid", type = "string"))
+@Filter(name = "obj.blogpost_uuid", condition = "uuid = :uuid")
 
 @TypeDef(name = JsonTypes.JSON_BIN, typeClass = JsonBinaryType.class)
 public class PerformedActionBlogPost extends PanacheEntityBase {
@@ -35,6 +33,8 @@ public class PerformedActionBlogPost extends PanacheEntityBase {
     public List<ActionValue> actions;
 
     public PerformedActionBlogPost() {
+
+        actions = new ArrayList<>();
     }
 
 }
