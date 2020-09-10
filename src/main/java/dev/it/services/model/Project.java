@@ -37,7 +37,6 @@ public class Project extends PanacheEntityBase {
     @Column(name = "uuid", unique = true, length = 100)
     @Id
     public String uuid;
-
     public String name;
     public String description;
     public String tags;
@@ -49,5 +48,14 @@ public class Project extends PanacheEntityBase {
     public Project() {
     }
 
-
+    @Override
+    public String toString() {
+        return "Project{" +
+                "uuid='" + uuid + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", tags='" + tags + '\'' +
+                ", properties=" + properties +
+                '}';
+    }
 }

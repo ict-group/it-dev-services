@@ -22,9 +22,6 @@ import java.time.LocalDate;
 @Singleton
 public class PerformedActionServiceRs extends RsRepositoryServiceV3<PerformedAction, String> {
 
-    @Inject
-    S3Service s3Service;
-
 
     public PerformedActionServiceRs() {
         super(PerformedAction.class);
@@ -77,7 +74,6 @@ public class PerformedActionServiceRs extends RsRepositoryServiceV3<PerformedAct
 
     @Override
     protected void prePersist(PerformedAction performedAction) throws Exception {
-
         performedAction.creation_date = LocalDate.now();
     }
 }

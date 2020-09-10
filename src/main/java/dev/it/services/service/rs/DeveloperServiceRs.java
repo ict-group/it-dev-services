@@ -31,9 +31,6 @@ import java.util.Set;
 public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String> {
 
     @Inject
-    S3Service s3Service;
-
-    @Inject
     Event companyEvent;
 
     private String oldCompanies;
@@ -42,12 +39,10 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         super(Developer.class);
     }
 
-
     @Override
     protected String getDefaultOrderBy() {
         return " surname asc";
     }
-
 
     @Override
     public PanacheQuery<Developer> getSearch(String orderBy) throws Exception {
