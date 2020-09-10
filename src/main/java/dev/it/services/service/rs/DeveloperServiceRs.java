@@ -88,6 +88,23 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
     }
 
     @Override
+    protected void prePersist(Developer developer) throws Exception {
+
+        //Check if the user tries to create a new Developer with the same uuid
+        if(developer.uuid != null){
+
+            Developer existingDeveloper = Developer.findById(developer.uuid);
+
+            if(existingDeveloper != null){
+
+                logger.error("Developer with uuid : " + developer.uuid + " already exists!");
+
+                throw new IllegalArgumentException("Developer with uuid: " + developer.uuid + " already exists!");
+            }
+        }
+    }
+
+    @Override
     protected void postPersist(Developer developer) throws Exception {
 
         if (developer != null){

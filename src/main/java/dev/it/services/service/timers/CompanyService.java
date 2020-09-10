@@ -61,7 +61,6 @@ public class CompanyService {
         logger.info("update");
 
         company.number_of++;
-
     }
 
     private void removeOrUpdateCompany(String companyName){
