@@ -41,7 +41,9 @@ public class Attachment extends PanacheEntityBase {
     public String mime_type;
     public String s3_url;
 
+    // the uuid of related entity (for example a BlogPost uuid)
     public String external_uuid;
+    // the name of entity (es: blogpost, developer, project, user)
     public String external_type;
 
     public Attachment() {
