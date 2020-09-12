@@ -16,33 +16,31 @@ public class TagService {
     @Transactional
     public void onEvent(@ObservesAsync TagEvent event) {
 
-        if(event.isAdded()){
+        if (event.isAdded()) {
 
             logger.error("ADDED");
             saveOrUpdateTag(event.getTag());
-        }
-        else {
+        } else {
 
             logger.error("REMOVED");
             removeOrUpdateTag(event.getTag());
         }
     }
 
-    private void saveOrUpdateTag(String tagName){
+    private void saveOrUpdateTag(String tagName) {
 
         Tag tag = Tag.find("name", tagName).firstResult();
 
-        if(tag == null){
+        if (tag == null) {
 
             createTag(tagName);
-        }
-        else {
+        } else {
 
             updateTag(tag);
         }
     }
 
-    private void createTag(String tagName){
+    private void createTag(String tagName) {
 
         logger.info("persist");
 
@@ -55,7 +53,7 @@ public class TagService {
         }
     }
 
-    private void updateTag(Tag tag){
+    private void updateTag(Tag tag) {
 
         logger.info("update");
 
@@ -63,13 +61,13 @@ public class TagService {
 
     }
 
-    private void removeOrUpdateTag(String tagName){
+    private void removeOrUpdateTag(String tagName) {
 
         Tag tag = Tag.find("name", tagName).firstResult();
 
         tag.numberOf--;
 
-        if(tag.numberOf == 0){
+        if (tag.numberOf == 0) {
 
             tag.delete();
         }
