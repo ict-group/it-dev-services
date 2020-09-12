@@ -130,7 +130,6 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
     protected void postUpdate(Developer developer) throws Exception {
 
         if(!oldCompanies.equals(developer.companies)) {
-
             String[] existingCompanies = oldCompanies.split(",");
 
             String[] newCompanies = developer.companies.split(",");

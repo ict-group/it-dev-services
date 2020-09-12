@@ -16,16 +16,15 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Path(AppConstants.BLOGPOSTS_PATH)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Singleton
 public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
-
-    @Inject
-    S3Service s3Service;
 
     @Inject
     Event tagEvent;
@@ -83,17 +82,13 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
 
     private void saveOrUpdateTagsForBlogpost(BlogPost blogPost) throws Exception {
 
-        if(blogPost != null){
+        if (blogPost != null) {
 
-            if(blogPost.tags == null){
-
+            if (blogPost.tags == null) {
                 logger.errorv("Blogpost should have it's corresponding tags.");
                 //maybe throw an exception (NoTagsForBlogpostException) ? and catch it with a exception mapper ?
-            }
-            else{
-
+            } else {
                 String[] tags = blogPost.tags.split(",");
-
                 Arrays.stream(tags).forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), true)));
             }
         }
@@ -101,21 +96,15 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
 
     @Override
     protected BlogPost preUpdate(BlogPost blogPost) throws Exception {
-
         BlogPost existingBlogPost = BlogPost.findById(blogPost.uuid);
-
         oldTags = existingBlogPost.tags;
-
         return super.preUpdate(blogPost);
     }
 
     @Override
     protected void postUpdate(BlogPost blogPost) throws Exception {
-
-        if(!oldTags.equals(blogPost.tags)) {
-
+        if (!oldTags.equals(blogPost.tags)) {
             String[] existingTags = oldTags.split(",");
-
             String[] newTags = blogPost.tags.split(",");
 
             //Find the similar elements that will not be touched
