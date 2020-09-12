@@ -20,16 +20,9 @@ public final class AppConstants {
     public static final String TAGS_PATH = API_PATH + "/tags";
 
 
-    // COSTANTI PER LEGGERE FileUploadRest
-    public static final String UPLOAD_FILE = "file";
-    public static final String UPLOAD_FOLDER = "folder";
-    public static final String UPLOAD_DOCUMENT_UUID = "document_uuid";
-    public static final String UPLOAD_TAGS = "tags";
-    public static final String UPLOAD_DOCUMENT_GROUP = "group";
-
-    // Ruoli Utente
+    // USER ROLES
     public static final String ADMIN_ROLE = "admin";
-
-
-    public static final String TRASH_FOLDER = "Trash";
+    public static final String MANAGER_ROLE = "manager";
+    public static final String USER_ROLE = "user";
+    
 }
