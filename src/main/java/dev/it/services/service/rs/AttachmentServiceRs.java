@@ -75,7 +75,7 @@ public class AttachmentServiceRs extends RsRepositoryServiceV3<Attachment, Strin
         }
         logger.infov(logMessage, attachment);
         logger.info(MediaType.valueOf(attachment.mime_type));
-        Response.ResponseBuilder response = Response.ok((StreamingOutput) output -> s3Service.downloadObject(attachment.name).writeTo(output));
+        Response.ResponseBuilder response = Response.ok((StreamingOutput) output -> s3Service.downloadObject(attachment.uuid).writeTo(output));
         response.header("Content-Disposition", "attachment;filename=" + attachment.name);
         response.header("Content-Type", attachment.mime_type);
         return response.build();
@@ -115,5 +115,4 @@ public class AttachmentServiceRs extends RsRepositoryServiceV3<Attachment, Strin
         PutObjectResponse result = s3Service.uploadObject(formData, attachment.uuid);
         attachment.s3name = attachment.uuid;
     }
-
 }

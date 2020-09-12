@@ -27,5 +27,4 @@ public class FormData {
     @FormParam("external_type")
     @PartType(MediaType.TEXT_PLAIN)
     public String external_type;
-
 }

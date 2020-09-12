@@ -4,7 +4,7 @@ import dev.it.api.service.RsRepositoryServiceV3;
 import dev.it.services.management.AppConstants;
 import dev.it.services.model.BlogPost;
 import dev.it.services.service.S3Service;
-import dev.it.services.service.TagEvent;
+import dev.it.services.service.events.TagEvent;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
