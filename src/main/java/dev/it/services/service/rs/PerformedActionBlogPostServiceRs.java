@@ -54,9 +54,7 @@ public class PerformedActionBlogPostServiceRs extends RsRepositoryServiceV3<Perf
         }
 
         if (nn("from.last_update")) {
-
             LocalDateTime date = LocalDateTime.parse(get("from.last_update"));
-
             search
                     .filter("from.last_update", Parameters.with("last_update", date));
         }

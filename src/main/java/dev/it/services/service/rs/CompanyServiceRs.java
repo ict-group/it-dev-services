@@ -1,15 +1,12 @@
 package dev.it.services.service.rs;
 
 import dev.it.api.service.RsRepositoryServiceV3;
-import dev.it.api.util.TableKeyUtils;
 import dev.it.services.management.AppConstants;
 import dev.it.services.model.Company;
-import dev.it.services.service.S3Service;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
@@ -21,10 +18,6 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 @Singleton
 public class CompanyServiceRs extends RsRepositoryServiceV3<Company, String> {
-
-    @Inject
-    S3Service s3Service;
-
 
     public CompanyServiceRs() {
         super(Company.class);

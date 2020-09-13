@@ -21,10 +21,7 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 @Singleton
 public class ProjectServiceRs extends RsRepositoryServiceV3<Project, String> {
-
-    @Inject
-    S3Service s3Service;
-
+    
     public ProjectServiceRs() {
         super(Project.class);
     }

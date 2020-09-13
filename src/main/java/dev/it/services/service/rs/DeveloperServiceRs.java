@@ -2,12 +2,11 @@ package dev.it.services.service.rs;
 
 import dev.it.api.service.RsRepositoryServiceV3;
 import dev.it.api.util.DateUtils;
+import dev.it.api.util.SlugUtils;
 import dev.it.services.management.AppConstants;
-import dev.it.services.model.BlogPost;
+import dev.it.services.model.Action;
 import dev.it.services.model.Developer;
-import dev.it.services.service.S3Service;
 import dev.it.services.service.events.CompanyEvent;
-import dev.it.services.service.events.TagEvent;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
@@ -84,30 +83,15 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
 
     @Override
     protected void prePersist(Developer developer) throws Exception {
-
-        //Check if the user tries to create a new Developer with the same uuid
-        if(developer.uuid != null){
-
-            Developer existingDeveloper = Developer.findById(developer.uuid);
-
-            if(existingDeveloper != null){
-
-                logger.error("Developer with uuid : " + developer.uuid + " already exists!");
-
-                throw new IllegalArgumentException("Developer with uuid: " + developer.uuid + " already exists!");
-            }
-        }
+        String generatedUuid = SlugUtils.makeUniqueSlug(developer.surname + "-" + developer.name, Developer.class, getEntityManager());
+        developer.uuid = generatedUuid;
     }
 
     @Override
     protected void postPersist(Developer developer) throws Exception {
-
-        if (developer != null){
-
-            if (developer.companies != null){
-
+        if (developer != null) {
+            if (developer.companies != null) {
                 String[] companies = developer.companies.split(",");
-
                 Arrays.stream(companies).forEach(companyName -> companyEvent.fireAsync(new CompanyEvent(companyName.toLowerCase().trim(), true)));
             }
         }
@@ -115,23 +99,18 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
 
     @Override
     protected Developer preUpdate(Developer developer) throws Exception {
-
-        if (developer.uuid != null){
-
+        if (developer.uuid != null) {
             Developer existingDeveloper = Developer.findById(developer.uuid);
-
             oldCompanies = existingDeveloper.companies;
         }
-
         return developer;
     }
 
     @Override
     protected void postUpdate(Developer developer) throws Exception {
 
-        if(!oldCompanies.equals(developer.companies)) {
+        if (!oldCompanies.equals(developer.companies)) {
             String[] existingCompanies = oldCompanies.split(",");
-
             String[] newCompanies = developer.companies.split(",");
 
             //Find the similar elements that will not be touched

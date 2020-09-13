@@ -1,8 +1,11 @@
 package dev.it.services.service.rs;
 
 import dev.it.api.service.RsRepositoryServiceV3;
+import dev.it.api.util.SlugUtils;
 import dev.it.services.management.AppConstants;
+import dev.it.services.model.Action;
 import dev.it.services.model.BlogPost;
+import dev.it.services.model.Developer;
 import dev.it.services.service.S3Service;
 import dev.it.services.service.events.TagEvent;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -75,8 +78,13 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
     }
 
     @Override
-    protected void postPersist(BlogPost blogPost) throws Exception {
+    protected void prePersist(BlogPost blogPost) throws Exception {
+        String generatedUuid = SlugUtils.makeUniqueSlug(blogPost.title, BlogPost.class, getEntityManager());
+        blogPost.uuid = generatedUuid;
+    }
 
+    @Override
+    protected void postPersist(BlogPost blogPost) throws Exception {
         saveOrUpdateTagsForBlogpost(blogPost);
     }
 

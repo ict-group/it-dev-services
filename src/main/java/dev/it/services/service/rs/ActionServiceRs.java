@@ -1,7 +1,7 @@
 package dev.it.services.service.rs;
 
 import dev.it.api.service.RsRepositoryServiceV3;
-import dev.it.api.util.TableKeyUtils;
+import dev.it.api.util.SlugUtils;
 import dev.it.services.management.AppConstants;
 import dev.it.services.model.Action;
 import dev.it.services.service.S3Service;
@@ -62,16 +62,7 @@ public class ActionServiceRs extends RsRepositoryServiceV3<Action, String> {
 
     @Override
     protected void prePersist(Action action) throws Exception {
-
-        String generatedUuid = TableKeyUtils.createSlug(action.name);
-
-        if(Action.findById(generatedUuid) != null){
-
-            logger.error("Generated Uuid : " + generatedUuid + " already exists!");
-
-            throw new IllegalArgumentException("'" + action.name + "' ");
-        }
-
+        String generatedUuid = SlugUtils.makeUniqueSlug(action.name, Action.class, getEntityManager());
         action.uuid = generatedUuid;
     }
 }
