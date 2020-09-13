@@ -35,6 +35,7 @@ public class Attachment extends PanacheEntityBase {
     public String uuid;
 
     public String name;
+    public Long size;
     public String s3name;
 
     public Date creation_date;
@@ -54,6 +55,7 @@ public class Attachment extends PanacheEntityBase {
         return "Attachment{" +
                 "uuid='" + uuid + '\'' +
                 ", name='" + name + '\'' +
+                ", size='" + size + '\'' +
                 ", s3name='" + s3name + '\'' +
                 ", creation_date=" + creation_date +
                 ", mime_type='" + mime_type + '\'' +
