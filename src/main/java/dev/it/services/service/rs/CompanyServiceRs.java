@@ -26,7 +26,7 @@ public class CompanyServiceRs extends RsRepositoryServiceV3<Company, String> {
 
     @Override
     protected String getDefaultOrderBy() {
-        return " company asc";
+        return " name asc";
     }
 
 
@@ -41,13 +41,13 @@ public class CompanyServiceRs extends RsRepositoryServiceV3<Company, String> {
         } else {
             search = Company.find("select a from Company a");
         }
-        if (nn("obj.company")) {
+        if (nn("obj.name")) {
             search
-                    .filter("obj.company", Parameters.with("company", get("obj.company")));
+                    .filter("obj.name", Parameters.with("name", get("obj.name")));
         }
-        if (nn("like.company")) {
+        if (nn("like.name")) {
             search
-                    .filter("like.company", Parameters.with("company", likeParamToLowerCase("like.company")));
+                    .filter("like.name", Parameters.with("name", likeParamToLowerCase("like.name")));
         }
 
         return search;

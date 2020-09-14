@@ -11,11 +11,11 @@ import javax.persistence.*;
 @Entity
 @Table(name = "companies")
 
-@FilterDef(name = "obj.company", parameters = @ParamDef(name = "company", type = "string"))
-@Filter(name = "obj.company", condition = "company = :company")
+@FilterDef(name = "obj.name", parameters = @ParamDef(name = "name", type = "string"))
+@Filter(name = "obj.name", condition = "name = :name")
 
-@FilterDef(name = "like.company", parameters = @ParamDef(name = "company", type = "string"))
-@Filter(name = "like.company", condition = "lower(company) LIKE :company")
+@FilterDef(name = "like.name", parameters = @ParamDef(name = "name", type = "string"))
+@Filter(name = "like.name", condition = "lower(name) LIKE :name")
 
 public class Company extends PanacheEntityBase {
 
@@ -24,15 +24,15 @@ public class Company extends PanacheEntityBase {
     @Column(name = "uuid", unique = true, length = 100)
     @Id
     public String uuid;
-    public String company;
+    public String name;
     public long number_of;
 
     public Company() {
         this.number_of = 1l;
     }
 
-    public Company(String company) {
-        this.company = company;
+    public Company(String name) {
+        this.name = name;
         this.number_of = 1L;
     }
 }

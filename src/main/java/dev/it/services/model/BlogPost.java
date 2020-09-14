@@ -36,6 +36,7 @@ public class BlogPost extends PanacheEntityBase {
     public String type;
     public String title;
     public String content;
+    public String content_preview;
     public String tags;
     public String author;
     public String video_url;
@@ -54,6 +55,7 @@ public class BlogPost extends PanacheEntityBase {
                 ", type='" + type + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
+                ", content_preview='" + content_preview + '\'' +
                 ", tags='" + tags + '\'' +
                 ", author='" + author + '\'' +
                 ", developer_uuid='" + developer_uuid + '\'' +

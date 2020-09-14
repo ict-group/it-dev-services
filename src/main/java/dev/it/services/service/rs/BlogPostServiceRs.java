@@ -3,11 +3,8 @@ package dev.it.services.service.rs;
 import dev.it.api.service.RsRepositoryServiceV3;
 import dev.it.api.util.SlugUtils;
 import dev.it.services.management.AppConstants;
-import dev.it.services.model.Action;
 import dev.it.services.model.BlogPost;
-import dev.it.services.model.Developer;
-import dev.it.services.service.S3Service;
-import dev.it.services.service.events.TagEvent;
+import dev.it.services.model.pojo.TagEvent;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
@@ -19,6 +16,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,8 +29,6 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
 
     @Inject
     Event tagEvent;
-
-    private String oldTags;
 
     public BlogPostServiceRs() {
         super(BlogPost.class);
@@ -81,6 +77,7 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
     protected void prePersist(BlogPost blogPost) throws Exception {
         String generatedUuid = SlugUtils.makeUniqueSlug(blogPost.title, BlogPost.class, getEntityManager());
         blogPost.uuid = generatedUuid;
+        blogPost.insert_date = LocalDateTime.now();
     }
 
     @Override
@@ -89,9 +86,7 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
     }
 
     private void saveOrUpdateTagsForBlogpost(BlogPost blogPost) throws Exception {
-
         if (blogPost != null) {
-
             if (blogPost.tags == null) {
                 logger.errorv("Blogpost should have it's corresponding tags.");
                 //maybe throw an exception (NoTagsForBlogpostException) ? and catch it with a exception mapper ?
@@ -105,30 +100,31 @@ public class BlogPostServiceRs extends RsRepositoryServiceV3<BlogPost, String> {
     @Override
     protected BlogPost preUpdate(BlogPost blogPost) throws Exception {
         BlogPost existingBlogPost = BlogPost.findById(blogPost.uuid);
-        oldTags = existingBlogPost.tags;
-        return super.preUpdate(blogPost);
+        blogPost.update_date = LocalDateTime.now();
+        String oldTags = existingBlogPost.tags;
+        if (!oldTags.equals(blogPost.tags)) {
+            oldTags(blogPost, oldTags);
+        }
+        return blogPost;
     }
 
-    @Override
-    protected void postUpdate(BlogPost blogPost) throws Exception {
-        if (!oldTags.equals(blogPost.tags)) {
-            String[] existingTags = oldTags.split(",");
-            String[] newTags = blogPost.tags.split(",");
+    protected void oldTags(BlogPost blogPost, String oldTags) throws Exception {
+        String[] existingTags = oldTags.split(",");
+        String[] newTags = blogPost.tags.split(",");
 
-            //Find the similar elements that will not be touched
-            Set<String> similar = new HashSet(Arrays.asList(existingTags));
-            similar.retainAll(Arrays.asList(newTags));
+        //Find the similar elements that will not be touched
+        Set<String> similar = new HashSet(Arrays.asList(existingTags));
+        similar.retainAll(Arrays.asList(newTags));
 
-            //Remove all tags removed from blogspot
-            Set<String> toRemoveTags = new HashSet<>(Arrays.asList(existingTags));
-            toRemoveTags.removeAll(similar);
-            toRemoveTags.stream().forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), false)));
+        //Remove all tags removed from blogspot
+        Set<String> toRemoveTags = new HashSet<>(Arrays.asList(existingTags));
+        toRemoveTags.removeAll(similar);
+        toRemoveTags.stream().forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), false)));
 
-            //Add all tags added to blogspot
-            Set<String> newTagsSet = new HashSet<>(Arrays.asList(newTags));
-            newTagsSet.removeAll(similar);
-            newTagsSet.stream().forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), true)));
-        }
+        //Add all tags added to blogspot
+        Set<String> newTagsSet = new HashSet<>(Arrays.asList(newTags));
+        newTagsSet.removeAll(similar);
+        newTagsSet.stream().forEach(tagName -> tagEvent.fireAsync(new TagEvent(tagName.toLowerCase().trim(), true)));
     }
 
 }

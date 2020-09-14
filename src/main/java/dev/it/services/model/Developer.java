@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -57,7 +58,8 @@ public class Developer extends PanacheEntityBase {
     @Column(columnDefinition = "jsonb")
     public List<PropertyValue> properties;
 
-    public Date creation_date;
+    public LocalDateTime insert_date;
+    public LocalDateTime update_date;
 
     public Developer() {
     }
@@ -77,7 +79,8 @@ public class Developer extends PanacheEntityBase {
                 ", birthdate=" + birthdate +
                 ", companies='" + companies + '\'' +
                 ", properties=" + properties +
-                ", creation_date=" + creation_date +
+                ", insert_date=" + insert_date +
+                ", update_date=" + update_date +
                 '}';
     }
 }

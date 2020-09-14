@@ -1,4 +1,4 @@
-package dev.it.services.service.events;
+package dev.it.services.model.pojo;
 
 public class TagEvent {
 

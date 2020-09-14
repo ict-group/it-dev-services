@@ -26,9 +26,7 @@ public class Tag extends PanacheEntityBase {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "uuid", unique = true, length = 100)
     public String uuid;
-
     public String name;
-
     public long numberOf;
 
     public Tag() {

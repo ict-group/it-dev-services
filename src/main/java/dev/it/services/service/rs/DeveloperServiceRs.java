@@ -4,9 +4,8 @@ import dev.it.api.service.RsRepositoryServiceV3;
 import dev.it.api.util.DateUtils;
 import dev.it.api.util.SlugUtils;
 import dev.it.services.management.AppConstants;
-import dev.it.services.model.Action;
 import dev.it.services.model.Developer;
-import dev.it.services.service.events.CompanyEvent;
+import dev.it.services.model.pojo.CompanyEvent;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
@@ -18,6 +17,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -32,7 +32,6 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
     @Inject
     Event companyEvent;
 
-    private String oldCompanies;
 
     public DeveloperServiceRs() {
         super(Developer.class);
@@ -85,6 +84,7 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
     protected void prePersist(Developer developer) throws Exception {
         String generatedUuid = SlugUtils.makeUniqueSlug(developer.surname + "-" + developer.name, Developer.class, getEntityManager());
         developer.uuid = generatedUuid;
+        developer.insert_date = LocalDateTime.now();
     }
 
     @Override
@@ -99,33 +99,32 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
 
     @Override
     protected Developer preUpdate(Developer developer) throws Exception {
-        if (developer.uuid != null) {
-            Developer existingDeveloper = Developer.findById(developer.uuid);
-            oldCompanies = existingDeveloper.companies;
+        String oldCompanies;
+        Developer existingDeveloper = Developer.findById(developer.uuid);
+        oldCompanies = existingDeveloper.companies;
+        if (!oldCompanies.equals(developer.companies)) {
+            workCompanies(developer, oldCompanies);
         }
+        developer.update_date = LocalDateTime.now();
         return developer;
     }
 
-    @Override
-    protected void postUpdate(Developer developer) throws Exception {
+    protected void workCompanies(Developer developer, String oldCompanies) throws Exception {
+        String[] existingCompanies = oldCompanies.split(",");
+        String[] newCompanies = developer.companies.split(",");
 
-        if (!oldCompanies.equals(developer.companies)) {
-            String[] existingCompanies = oldCompanies.split(",");
-            String[] newCompanies = developer.companies.split(",");
+        //Find the similar elements that will not be touched
+        Set<String> similar = new HashSet(Arrays.asList(existingCompanies));
+        similar.retainAll(Arrays.asList(newCompanies));
 
-            //Find the similar elements that will not be touched
-            Set<String> similar = new HashSet(Arrays.asList(existingCompanies));
-            similar.retainAll(Arrays.asList(newCompanies));
+        //Remove all tags removed from blogspot
+        Set<String> toRemoveCompanies = new HashSet<>(Arrays.asList(existingCompanies));
+        toRemoveCompanies.removeAll(similar);
+        toRemoveCompanies.stream().forEach(tagName -> companyEvent.fireAsync(new CompanyEvent(tagName.toLowerCase().trim(), false)));
 
-            //Remove all tags removed from blogspot
-            Set<String> toRemoveCompanies = new HashSet<>(Arrays.asList(existingCompanies));
-            toRemoveCompanies.removeAll(similar);
-            toRemoveCompanies.stream().forEach(tagName -> companyEvent.fireAsync(new CompanyEvent(tagName.toLowerCase().trim(), false)));
-
-            //Add all tags added to blogspot
-            Set<String> newCompaniesSet = new HashSet<>(Arrays.asList(newCompanies));
-            newCompaniesSet.removeAll(similar);
-            newCompaniesSet.stream().forEach(tagName -> companyEvent.fireAsync(new CompanyEvent(tagName.toLowerCase().trim(), true)));
-        }
+        //Add all tags added to blogspot
+        Set<String> newCompaniesSet = new HashSet<>(Arrays.asList(newCompanies));
+        newCompaniesSet.removeAll(similar);
+        newCompaniesSet.stream().forEach(tagName -> companyEvent.fireAsync(new CompanyEvent(tagName.toLowerCase().trim(), true)));
     }
 }

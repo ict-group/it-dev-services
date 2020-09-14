@@ -3,7 +3,6 @@ package dev.it.services.service.rs;
 import dev.it.api.service.RsRepositoryServiceV3;
 import dev.it.services.management.AppConstants;
 import dev.it.services.model.Attachment;
-import dev.it.services.model.Developer;
 import dev.it.services.model.pojo.FormData;
 import dev.it.services.service.S3Service;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;

@@ -4,13 +4,10 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
-import org.jboss.resteasy.annotations.providers.multipart.PartType;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.MediaType;
 import java.util.Date;
 
 
