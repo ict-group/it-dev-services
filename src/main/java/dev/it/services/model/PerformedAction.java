@@ -31,15 +31,10 @@ public class PerformedAction extends PanacheEntityBase {
     @Column(name = "uuid", unique = true, length = 100)
     @Id
     public String uuid;
-
     public String action;
-
     public String blogpost_uuid;
-
     public String user_uuid;
-
     public LocalDate creation_date;
-
     public LocalDate working_date;
 
     public PerformedAction() {

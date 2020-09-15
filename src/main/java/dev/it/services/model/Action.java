@@ -20,11 +20,8 @@ public class Action extends PanacheEntityBase {
 
     @Id
     public String uuid;
-
     public String name;
-
     public String icon;
-
     public long operation_to_execute;
 
     public Action() {

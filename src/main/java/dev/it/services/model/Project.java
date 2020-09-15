@@ -9,6 +9,7 @@ import org.lorislab.quarkus.hibernate.types.json.JsonTypes;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -46,6 +47,7 @@ public class Project extends PanacheEntityBase {
     public List<PropertyValue> properties;
 
     public Project() {
+        this.properties = new ArrayList<>();
     }
 
     @Override

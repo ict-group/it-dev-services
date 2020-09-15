@@ -31,15 +31,12 @@ public class PerformedActionBlogPost extends PanacheEntityBase {
 
     @Id
     public String uuid;
-
     public LocalDateTime last_update;
-
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     public List<ActionValue> actions;
 
     public PerformedActionBlogPost() {
-
         actions = new ArrayList<>();
     }
 

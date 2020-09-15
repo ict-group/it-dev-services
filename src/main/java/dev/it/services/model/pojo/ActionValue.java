@@ -8,14 +8,14 @@ public class ActionValue implements Serializable {
     public Long numberOf;
 
     public ActionValue() {
-        this.numberOf = 1l;
+        this.numberOf = 1L;
     }
 
     public ActionValue(String action) {
-
         this.action = action;
-        this.numberOf = 1l;
+        this.numberOf = 1L;
     }
+
 
     @Override
     public String toString() {

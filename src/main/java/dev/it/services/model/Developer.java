@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -62,6 +63,7 @@ public class Developer extends PanacheEntityBase {
     public LocalDateTime update_date;
 
     public Developer() {
+        this.properties = new ArrayList<>();
     }
 
     @Override
