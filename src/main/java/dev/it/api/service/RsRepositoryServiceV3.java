@@ -7,7 +7,6 @@ import io.quarkus.panache.common.Sort;
 import io.quarkus.security.identity.SecurityIdentity;
 import org.jboss.logging.Logger;
 
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
