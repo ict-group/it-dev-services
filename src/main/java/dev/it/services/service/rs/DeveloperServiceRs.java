@@ -145,20 +145,33 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         }
         if (nn("like.surname")) {
             //append and add paaremets
+            sb.append(separator).append("lower(surname) LIKE :surname");
+            parameters.put("surname", get("like.surname"));
+            separator = " and ";
         }
         if (nn("like.tags")) {
             //append and add paaremets
+            sb.append(separator).append("lower(tags) LIKE :tags");
+            parameters.put("tags", get("like.tags"));
+            separator = " and ";
         }
         if (nn("like.biography")) {
             //append and add paaremets
+            sb.append(separator).append("lower(biography) LIKE :biography");
+            parameters.put("biography", get("like.tabiographygs"));
+            separator = " and ";
         }
         if (nn("from.birthdate")) {
             Date date = DateUtils.parseDate(get("from.birthdate"));
             //append and add paaremets
+            sb.append(separator).append("birthdate >= :from_birthdate");
+            parameters.put("from_birthdate", date);
         }
         if (nn("to.birthdate")) {
             Date date = DateUtils.parseDate(get("to.birthdate"));
             //append and add paaremets
+            sb.append(separator).append("birthdate >= :to_birthdate");
+            parameters.put("to_birthdate", date);
         }
     }
 
