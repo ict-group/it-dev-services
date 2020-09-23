@@ -19,10 +19,13 @@ public final class AppConstants {
     public static final String USERS_PATH = API_PATH + "/users";
     public static final String TAGS_PATH = API_PATH + "/tags";
 
+    //TABLE NAMES
+    public static final String TABLE_NAME = "developers";
+
 
     // USER ROLES
     public static final String ADMIN_ROLE = "admin";
     public static final String MANAGER_ROLE = "manager";
     public static final String USER_ROLE = "user";
-    
+
 }

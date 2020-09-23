@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static dev.it.services.model.Developer.TABLE_NAME;
+import static dev.it.services.management.AppConstants.TABLE_NAME;
 
 @Entity
 @Table(name = TABLE_NAME)
@@ -43,7 +43,6 @@ import static dev.it.services.model.Developer.TABLE_NAME;
 @TypeDef(name = JsonTypes.JSON_BIN, typeClass = JsonBinaryType.class)
 public class Developer extends PanacheEntityBase {
 
-    public static final String TABLE_NAME = "developers";
 
     @Id
     public String uuid;

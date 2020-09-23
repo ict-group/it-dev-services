@@ -7,11 +7,8 @@ import dev.it.services.management.AppConstants;
 import dev.it.services.model.Developer;
 import dev.it.services.model.pojo.CompanyEvent;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
-import io.smallrye.mutiny.Uni;
-import io.vertx.core.MultiMap;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -71,8 +68,8 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
             if (pageSize == null) {
                 pageSize = 10;
             }
-            Integer listSize = getSearch(Developer.TABLE_NAME, orderBy, true, ui.getQueryParameters()).getFirstResult();
-            Query search = getSearch(Developer.TABLE_NAME, orderBy, false, ui.getQueryParameters());
+            Integer listSize = getSearch(AppConstants.TABLE_NAME, orderBy, true, ui.getQueryParameters()).getFirstResult();
+            Query search = getSearch(AppConstants.TABLE_NAME, orderBy, false, ui.getQueryParameters());
             List<Developer> list;
             if (listSize == 0) {
                 list = new ArrayList<>();
