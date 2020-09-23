@@ -136,9 +136,19 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
             parameters.put("hair_colour_obj", get("json.hair_colour_obj"));
             separator = " and ";
         }
+        if (nn("json.hair_colour_like")) {
+            sb.append(separator).append("obj->> 'name' = 'hair_colour' and obj->>'value' like :hair_colour_like ");
+            parameters.put("hair_colour_like", likeParam("json.hair_colour_like"));
+            separator = " and ";
+        }
         if (nn("json.number_of_degree_courses_gte")) {
             sb.append(separator).append("obj->> 'name' = 'number_of_degree_courses' and obj->>'value' >= :number_of_degree_courses_gte ");
             parameters.put("number_of_degree_courses_gte", get("json.number_of_degree_courses_gte"));
+            separator = " and ";
+        }
+        if (nn("json.number_of_degree_courses_lte")) {
+            sb.append(separator).append("obj->> 'name' = 'number_of_degree_courses' and obj->>'value' <= :number_of_degree_courses_lte ");
+            parameters.put("number_of_degree_courses_lte", get("json.number_of_degree_courses_lte"));
             separator = " and ";
         }
         if (nn("like.username")) {
@@ -192,12 +202,12 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
     protected String createFindQuery(String tableName, String query, int paramCount) {
         String table = tableName != null ? tableName.trim() : getEntityClass().toString();
         if (query == null) {
-            return "FROM " + table;
+            return "SELECT * FROM " + table;
         }
 
         String trimmed = query.trim();
         if (trimmed.isEmpty()) {
-            return "FROM " + table;
+            return "SELECT * FROM " + table;
         }
 
         if (isNamedQuery(query)) {
@@ -210,12 +220,12 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
             return query;
         }
         if (trimmedLc.startsWith("order by ")) {
-            return "FROM " + table + " " + query;
+            return "SELECT * FROM " + table + " " + query;
         }
         if (trimmedLc.indexOf(' ') == -1 && trimmedLc.indexOf('=') == -1 && paramCount == 1) {
             query += " = ?1";
         }
-        return "FROM " + table + query;
+        return "SELECT * FROM " + table + query;
     }
 
     protected boolean isNamedQuery(String query) {
