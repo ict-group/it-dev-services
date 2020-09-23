@@ -68,8 +68,8 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
             if (pageSize == null) {
                 pageSize = 10;
             }
-            Integer listSize = getSearch(AppConstants.TABLE_NAME, orderBy, true, ui.getQueryParameters()).getFirstResult();
-            Query search = getSearch(AppConstants.TABLE_NAME, orderBy, false, ui.getQueryParameters());
+            Integer listSize = getSearch(AppConstants.TABLE_NAME, getOrderBy(orderBy), true, ui.getQueryParameters()).getFirstResult();
+            Query search = getSearch(AppConstants.TABLE_NAME, getOrderBy(orderBy), false, ui.getQueryParameters());
             List<Developer> list;
             if (listSize == 0) {
                 list = new ArrayList<>();
@@ -90,6 +90,15 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         }
     }
 
+    private String getOrderBy(String orderBy) {
+        if (orderBy != null && !orderBy.trim().isEmpty()) {
+            return "ORDER BY " + orderBy;
+        } else if (getDefaultOrderBy() != null && !getDefaultOrderBy().trim().isEmpty()) {
+            return "ORDER BY " + getDefaultOrderBy();
+        }
+        return null;
+    }
+
 
     public Query getSearch(String tableName, String orderBy, boolean count, MultivaluedMap<String, String> multiMap) {
         StringBuffer sb = new StringBuffer();
@@ -101,6 +110,9 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
             queryString = createCountQuery(tableName, sb.toString(), 0);
         } else {
             queryString = createFindQuery(tableName, sb.toString(), 0);
+        }
+        if (!count && orderBy != null) {
+            sb.append(orderBy);
         }
         Query query = getEntityManager().createNativeQuery(queryString);
         for (String param : params.keySet()) {
