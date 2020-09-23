@@ -116,7 +116,7 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         if (!count && orderBy != null) {
             sb.append(orderBy);
         }
-        if (!count) {
+        if (count) {
             query = getEntityManager().createNativeQuery(queryString);
         } else {
             query = getEntityManager().createNativeQuery(queryString, super.getEntityClass());
