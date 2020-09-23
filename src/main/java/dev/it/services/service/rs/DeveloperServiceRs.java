@@ -10,16 +10,16 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
+import io.smallrye.mutiny.Uni;
+import io.vertx.core.MultiMap;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -65,9 +65,20 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
                                String orderBy,
                                UriInfo ui) {
         try {
-            long listSize = 0;
-            List<Developer> list = new ArrayList<>();
-
+            if (startRow == null) {
+                startRow = 0;
+            }
+            if (pageSize == null) {
+                pageSize = 10;
+            }
+            Integer listSize = getSearch(orderBy, true, ui.getQueryParameters()).getFirstResult();
+            Query search = getSearch(orderBy, false, ui.getQueryParameters());
+            List<Developer> list;
+            if (listSize == 0) {
+                list = new ArrayList<>();
+            } else {
+                list = search.setFirstResult(startRow).setMaxResults(pageSize).getResultList();
+            }
             return Response
                     .status(Response.Status.OK)
                     .entity(list)
@@ -83,6 +94,62 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
     }
 
 
+    public Query getSearch(String orderBy, boolean count, MultivaluedMap<String, String> multiMap) {
+        StringBuffer sb = new StringBuffer();
+        Map<String, Object> params = new HashMap<>();
+        String separator = " where ";
+        applyRestictions(sb, separator, params);
+        String queryString;
+        if (count) {
+            queryString = createCountQuery(sb.toString(), 0);
+        } else {
+            queryString = createFindQuery(sb.toString(), 0);
+        }
+        Query query = getEntityManager().createNativeQuery(queryString);
+        for (String param : params.keySet()) {
+            query.setParameter(param, params.get(param));
+        }
+        return query;
+    }
+
+
+    public void applyRestictions(StringBuffer sb, String separator, Map<String, Object> parameters) {
+        if (nn("json.hair_colour_obj")) {
+            sb.append(separator).append("obj->> 'name' = 'hair_colour' and obj->>'value' = :hair_colour_obj ");
+            parameters.put("hair_colour_obj", get("json.hair_colour_obj"));
+            separator = " and ";
+        }
+        if (nn("json.number_of_degree_courses_gte")) {
+            sb.append(separator).append("obj->> 'name' = 'number_of_degree_courses' and obj->>'value' >= :number_of_degree_courses_gte ");
+            parameters.put("number_of_degree_courses_gte", get("json.number_of_degree_courses_gte"));
+            separator = " and ";
+        }
+        if (nn("like.username")) {
+            sb.append(separator).append("lower(username) LIKE :username");
+            parameters.put("username", get("like.username"));
+            separator = " and ";
+
+        }
+        if (nn("like.surname")) {
+            //append and add paaremets
+        }
+        if (nn("like.tags")) {
+            //append and add paaremets
+        }
+        if (nn("like.biography")) {
+            //append and add paaremets
+        }
+        if (nn("from.birthdate")) {
+            Date date = DateUtils.parseDate(get("from.birthdate"));
+            //append and add paaremets
+        }
+        if (nn("to.birthdate")) {
+            Date date = DateUtils.parseDate(get("to.birthdate"));
+            //append and add paaremets
+        }
+    }
+
+
     private boolean uriInfoContainsJsonbParameters(UriInfo ui) {
         for (String key : ui.getQueryParameters().keySet())
             if (key.startsWith("json.")) {
@@ -90,6 +157,66 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
             }
         return false;
     }
+
+
+    protected String createFindQuery(String query, int paramCount) {
+        if (query == null) {
+            return "FROM " + getEntityClass();
+        }
+
+        String trimmed = query.trim();
+        if (trimmed.isEmpty()) {
+            return "FROM " + getEntityClass();
+        }
+
+        if (isNamedQuery(query)) {
+            // we return named query as is
+            return query;
+        }
+
+        String trimmedLc = trimmed.toLowerCase();
+        if (trimmedLc.startsWith("from ") || trimmedLc.startsWith("select ")) {
+            return query;
+        }
+        if (trimmedLc.startsWith("order by ")) {
+            return "FROM " + getEntityClass() + " " + query;
+        }
+        if (trimmedLc.indexOf(' ') == -1 && trimmedLc.indexOf('=') == -1 && paramCount == 1) {
+            query += " = ?1";
+        }
+        return "FROM " + getEntityClass() + " WHERE " + query;
+    }
+
+    protected boolean isNamedQuery(String query) {
+        if (query == null || query.isEmpty()) {
+            return false;
+        }
+        return query.charAt(0) == '#';
+    }
+
+
+    protected String createCountQuery(String query, int paramCount) {
+        if (query == null)
+            return "SELECT COUNT(*) FROM " + getEntityClass();
+
+        String trimmed = query.trim();
+        if (trimmed.isEmpty())
+            return "SELECT COUNT(*) FROM " + getEntityClass();
+
+        String trimmedLc = trimmed.toLowerCase();
+        if (trimmedLc.startsWith("from ")) {
+            return "SELECT COUNT(*) " + query;
+        }
+        if (trimmedLc.startsWith("order by ")) {
+            // ignore it
+            return "SELECT COUNT(*) FROM " + getEntityClass();
+        }
+        if (trimmedLc.indexOf(' ') == -1 && trimmedLc.indexOf('=') == -1 && paramCount == 1) {
+            query += " = ?1";
+        }
+        return "SELECT COUNT(*) FROM " + getEntityClass() + " WHERE " + query;
+    }
+
 
     @Override
     public PanacheQuery<Developer> getSearch(String orderBy) throws Exception {
