@@ -184,7 +184,7 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         if (trimmedLc.indexOf(' ') == -1 && trimmedLc.indexOf('=') == -1 && paramCount == 1) {
             query += " = ?1";
         }
-        return "FROM " + getEntityClass() + " WHERE " + query;
+        return "FROM " + getEntityClass() + " " + query;
     }
 
     protected boolean isNamedQuery(String query) {
@@ -214,7 +214,7 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         if (trimmedLc.indexOf(' ') == -1 && trimmedLc.indexOf('=') == -1 && paramCount == 1) {
             query += " = ?1";
         }
-        return "SELECT COUNT(*) FROM " + getEntityClass() + " WHERE " + query;
+        return "SELECT COUNT(*) FROM " + getEntityClass() + " " + query;
     }
 
 
