@@ -92,9 +92,9 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
 
     private String getOrderBy(String orderBy) {
         if (orderBy != null && !orderBy.trim().isEmpty()) {
-            return "ORDER BY " + orderBy;
+            return " ORDER BY " + orderBy;
         } else if (getDefaultOrderBy() != null && !getDefaultOrderBy().trim().isEmpty()) {
-            return "ORDER BY " + getDefaultOrderBy();
+            return " ORDER BY " + getDefaultOrderBy();
         }
         return null;
     }
@@ -106,6 +106,7 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         String separator = " where ";
         applyRestictions(sb, separator, params);
         String queryString;
+        Query query;
         if (count) {
             queryString = createCountQuery(tableName, sb.toString(), 0);
         } else {
@@ -113,8 +114,10 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         }
         if (!count && orderBy != null) {
             sb.append(orderBy);
+            query = getEntityManager().createNativeQuery(queryString);
+        } else {
+            query = getEntityManager().createNativeQuery(queryString, super.getEntityClass());
         }
-        Query query = getEntityManager().createNativeQuery(queryString);
         for (String param : params.keySet()) {
             query.setParameter(param, params.get(param));
         }
