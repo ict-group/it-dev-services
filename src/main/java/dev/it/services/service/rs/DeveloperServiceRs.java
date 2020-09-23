@@ -68,6 +68,7 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
             if (pageSize == null) {
                 pageSize = 10;
             }
+
             Integer listSize = getSearch(AppConstants.TABLE_NAME, getOrderBy(orderBy), true, ui.getQueryParameters()).getFirstResult();
             Query search = getSearch(AppConstants.TABLE_NAME, getOrderBy(orderBy), false, ui.getQueryParameters());
             List<Developer> list;
@@ -197,7 +198,7 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         if (trimmedLc.indexOf(' ') == -1 && trimmedLc.indexOf('=') == -1 && paramCount == 1) {
             query += " = ?1";
         }
-        return "FROM " + table + " " + query;
+        return "FROM " + table + ", jsonb_array_elements(properties) obj " + query;
     }
 
     protected boolean isNamedQuery(String query) {
@@ -229,7 +230,7 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         if (trimmedLc.indexOf(' ') == -1 && trimmedLc.indexOf('=') == -1 && paramCount == 1) {
             query += " = ?1";
         }
-        return "SELECT COUNT(*) FROM " + table + " " + query;
+        return "SELECT COUNT(*) FROM " + table + ", jsonb_array_elements(properties) obj " + query;
     }
 
 
