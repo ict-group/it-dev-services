@@ -68,8 +68,8 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
             if (pageSize == null) {
                 pageSize = 10;
             }
-
-            Integer listSize = getSearch(AppConstants.TABLE_NAME, getOrderBy(orderBy), true, ui.getQueryParameters()).getFirstResult();
+            Query searchSize = getSearch(AppConstants.TABLE_NAME, getOrderBy(orderBy), true, ui.getQueryParameters());
+            Integer listSize = ((Number) searchSize.getSingleResult()).intValue();
             Query search = getSearch(AppConstants.TABLE_NAME, getOrderBy(orderBy), false, ui.getQueryParameters());
             List<Developer> list;
             if (listSize == 0) {
@@ -109,18 +109,22 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         String queryString;
         Query query;
         if (count) {
-            queryString = createCountQuery(tableName, sb.toString(), 0);
+            queryString = createCountQuery(tableName + ", jsonb_array_elements(properties) obj ", sb.toString(), 0);
         } else {
-            queryString = createFindQuery(tableName, sb.toString(), 0);
+            queryString = createFindQuery(tableName + ", jsonb_array_elements(properties) obj ", sb.toString(), 0);
         }
         if (!count && orderBy != null) {
             sb.append(orderBy);
+        }
+        if (!count) {
             query = getEntityManager().createNativeQuery(queryString);
         } else {
             query = getEntityManager().createNativeQuery(queryString, super.getEntityClass());
         }
+        logger.info("query: " + queryString);
         for (String param : params.keySet()) {
             query.setParameter(param, params.get(param));
+            logger.info("param: " + param + ", value: " + params.get(param));
         }
         return query;
     }
@@ -211,7 +215,7 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         if (trimmedLc.indexOf(' ') == -1 && trimmedLc.indexOf('=') == -1 && paramCount == 1) {
             query += " = ?1";
         }
-        return "FROM " + table + ", jsonb_array_elements(properties) obj " + query;
+        return "FROM " + table + query;
     }
 
     protected boolean isNamedQuery(String query) {
@@ -243,7 +247,7 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         if (trimmedLc.indexOf(' ') == -1 && trimmedLc.indexOf('=') == -1 && paramCount == 1) {
             query += " = ?1";
         }
-        return "SELECT COUNT(*) FROM " + table + ", jsonb_array_elements(properties) obj " + query;
+        return "SELECT COUNT(*) FROM " + table + query;
     }
 
 
