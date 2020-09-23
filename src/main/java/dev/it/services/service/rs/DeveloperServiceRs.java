@@ -45,6 +45,7 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
 
     @GET
     @Transactional
+    @Override
     public Response getList(
             @DefaultValue("0") @QueryParam("startRow") Integer startRow,
             @DefaultValue("10") @QueryParam("pageSize") Integer pageSize,
@@ -56,7 +57,6 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
             //NATIVE WAY
             return nativeList(startRow, pageSize, orderBy, ui);
         }
-
     }
 
 
