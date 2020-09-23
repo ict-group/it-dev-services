@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static dev.it.services.model.Developer.TABLE_NAME;
+
 @Entity
-@Table(name = "developers")
+@Table(name = TABLE_NAME)
 @FilterDef(name = "obj.uuid", parameters = @ParamDef(name = "uuid", type = "string"))
 @Filter(name = "obj.uuid", condition = "uuid = :uuid")
 
@@ -41,9 +43,10 @@ import java.util.List;
 @TypeDef(name = JsonTypes.JSON_BIN, typeClass = JsonBinaryType.class)
 public class Developer extends PanacheEntityBase {
 
+    public static final String TABLE_NAME = "developers";
+
     @Id
     public String uuid;
-
     public String username;
     public String name;
     public String surname;

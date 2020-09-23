@@ -71,8 +71,8 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
             if (pageSize == null) {
                 pageSize = 10;
             }
-            Integer listSize = getSearch(orderBy, true, ui.getQueryParameters()).getFirstResult();
-            Query search = getSearch(orderBy, false, ui.getQueryParameters());
+            Integer listSize = getSearch(Developer.TABLE_NAME, orderBy, true, ui.getQueryParameters()).getFirstResult();
+            Query search = getSearch(Developer.TABLE_NAME, orderBy, false, ui.getQueryParameters());
             List<Developer> list;
             if (listSize == 0) {
                 list = new ArrayList<>();
@@ -94,16 +94,16 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
     }
 
 
-    public Query getSearch(String orderBy, boolean count, MultivaluedMap<String, String> multiMap) {
+    public Query getSearch(String tableName, String orderBy, boolean count, MultivaluedMap<String, String> multiMap) {
         StringBuffer sb = new StringBuffer();
         Map<String, Object> params = new HashMap<>();
         String separator = " where ";
         applyRestictions(sb, separator, params);
         String queryString;
         if (count) {
-            queryString = createCountQuery(sb.toString(), 0);
+            queryString = createCountQuery(tableName, sb.toString(), 0);
         } else {
-            queryString = createFindQuery(sb.toString(), 0);
+            queryString = createFindQuery(tableName, sb.toString(), 0);
         }
         Query query = getEntityManager().createNativeQuery(queryString);
         for (String param : params.keySet()) {
@@ -159,14 +159,15 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
     }
 
 
-    protected String createFindQuery(String query, int paramCount) {
+    protected String createFindQuery(String tableName, String query, int paramCount) {
+        String table = tableName != null ? tableName.trim() : getEntityClass().toString();
         if (query == null) {
-            return "FROM " + getEntityClass();
+            return "FROM " + table;
         }
 
         String trimmed = query.trim();
         if (trimmed.isEmpty()) {
-            return "FROM " + getEntityClass();
+            return "FROM " + table;
         }
 
         if (isNamedQuery(query)) {
@@ -179,12 +180,12 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
             return query;
         }
         if (trimmedLc.startsWith("order by ")) {
-            return "FROM " + getEntityClass() + " " + query;
+            return "FROM " + table + " " + query;
         }
         if (trimmedLc.indexOf(' ') == -1 && trimmedLc.indexOf('=') == -1 && paramCount == 1) {
             query += " = ?1";
         }
-        return "FROM " + getEntityClass() + " " + query;
+        return "FROM " + table + " " + query;
     }
 
     protected boolean isNamedQuery(String query) {
@@ -195,13 +196,15 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
     }
 
 
-    protected String createCountQuery(String query, int paramCount) {
+    protected String createCountQuery(String tableName, String query, int paramCount) {
+
+        String table = tableName != null ? tableName.trim() : getEntityClass().toString();
         if (query == null)
-            return "SELECT COUNT(*) FROM " + getEntityClass();
+            return "SELECT COUNT(*) FROM " + table;
 
         String trimmed = query.trim();
         if (trimmed.isEmpty())
-            return "SELECT COUNT(*) FROM " + getEntityClass();
+            return "SELECT COUNT(*) FROM " + table;
 
         String trimmedLc = trimmed.toLowerCase();
         if (trimmedLc.startsWith("from ")) {
@@ -209,12 +212,12 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         }
         if (trimmedLc.startsWith("order by ")) {
             // ignore it
-            return "SELECT COUNT(*) FROM " + getEntityClass();
+            return "SELECT COUNT(*) FROM " + table;
         }
         if (trimmedLc.indexOf(' ') == -1 && trimmedLc.indexOf('=') == -1 && paramCount == 1) {
             query += " = ?1";
         }
-        return "SELECT COUNT(*) FROM " + getEntityClass() + " " + query;
+        return "SELECT COUNT(*) FROM " + table + " " + query;
     }
 
 
