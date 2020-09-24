@@ -41,8 +41,23 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
     }
 
     @Override
-    protected void removeProp(Developer developer, String name, String value) {
+    protected Developer updateProp(Developer developer, String name, String value, String new_value) {
+        if(developer.properties != null){
 
+            for (PropertyValue propertyValue : developer.properties) {
+
+                if(propertyValue.name.equals(name)){
+
+                    propertyValue.value = new_value;
+                }
+            }
+        }
+
+        return developer;
+    }
+
+    @Override
+    protected void removeProp(Developer developer, String name, String value) {
         if(developer.properties != null){
 
             developer.properties.removeIf(propertyValue -> propertyValue.name.equals(name));

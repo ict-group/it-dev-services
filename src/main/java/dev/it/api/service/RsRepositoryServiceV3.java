@@ -284,40 +284,58 @@ public abstract class RsRepositoryServiceV3<T extends PanacheEntityBase, U> exte
     protected void postList(List<T> list) throws Exception {
     }
 
-//    protected void preUpdateProp(U id, String name, String value, String new_value) throws Exception {
-//    }
-//
-//    @PUT
-//    @Transactional
-//    @Path("{uuid}/updateprop/{name}/value/{value}/with/{new_value}")
-//    public Response updateProperty(@PathParam("uuid") U id,
-//                                   @PathParam("name") String name,
-//                                   @PathParam("value") String value,
-//                                   @PathParam("new_value") String new_value) {
-//
-//        try {
-//            preUpdateProp(id, name, value, new_value);
-//        } catch (Exception e) {
-//            logger.errorv(e, "update:" + id);
-//            return jsonMessageResponse(Status.BAD_REQUEST, e);
-//        }
-//        try {
-////            entityManager.merge(object);
-//            return Response.status(Status.OK).entity(object).build();
-//        } catch (Exception e) {
-//            logger.errorv(e, "update:" + id);
-//            return jsonErrorMessageResponse(object);
-//        } finally {
-//            try {
-//                postUpdateProp(object);
-//            } catch (Exception e) {
-//                logger.errorv(e, "update:" + id);
-//            }
-//        }
-//    }
-//
-//    protected void postUpdateProp(T object) throws Exception {
-//    }
+    protected void preUpdateProp(U id, String name, String value, String new_value) throws Exception {
+    }
+
+    @PUT
+    @Transactional
+    @Path("{uuid}/updateprop/{name}/value/{value}/with/{new_value}")
+    public Response updateProperty(@PathParam("uuid") U id,
+                                   @PathParam("name") String name,
+                                   @PathParam("value") String value,
+                                   @PathParam("new_value") String new_value) {
+
+        logger.info("update property at: " + id);
+
+        try {
+            preUpdateProp(id, name, value, new_value);
+        } catch (Exception e) {
+            logger.errorv(e, "update property at: " + id);
+            return jsonMessageResponse(Status.BAD_REQUEST, e);
+        }
+        T object;
+        try {
+            object = find(id);
+            if (object == null) {
+                return handleObjectNotFoundRequest(id);
+            }
+        } catch (Exception e) {
+            return jsonMessageResponse(Status.BAD_REQUEST, e);
+        }
+        try {
+            updateProp(object, name, value, new_value);
+            entityManager.merge(object);
+            return Response.status(Status.OK).entity(object).build();
+        } catch (Exception e) {
+            logger.errorv(e, "update property at: " + id);
+            return jsonErrorMessageResponse(e);
+        }
+        finally {
+            try {
+                postUpdateProp(id, name, value, new_value);
+            } catch (Exception e) {
+                logger.errorv(e, "update property at:" + id);
+            }
+        }
+    }
+
+    protected T updateProp(T t, String name, String value, String new_value) {
+
+        return t;
+    }
+
+    protected void postUpdateProp(U id, String name, String value, String new_value) throws Exception {
+    }
 
 
     protected void preDeleteProp(U id, String name, String value) throws Exception {
