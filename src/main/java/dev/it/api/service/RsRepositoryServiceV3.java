@@ -168,6 +168,34 @@ public abstract class RsRepositoryServiceV3<T extends PanacheEntityBase, U> exte
     protected void preDelete(U id) throws Exception {
     }
 
+    @PUT
+    @Transactional
+    @Path("{uuid}/updateprop/{name}/value/{value}/with/{new_value}")
+    public Response updateProperty(@PathParam("uuid") U id,
+                                   @PathParam("name") String name,
+                                   @PathParam("value") String value,
+                                   @PathParam("new_value") String new_value,
+                                   T object) {
+
+        String response = "uuid: "+ id + " name: " + name + " value: " + value + " new_value: " + new_value;
+
+        return Response.status(Status.OK).entity(response).build();
+    }
+
+    @DELETE
+    @Transactional
+    @Path("{uuid}/deleteprop/{name}/value/{value}/with/{new_value}")
+    public Response deleteProperty(@PathParam("uuid") U id,
+                                   @PathParam("name") String name,
+                                   @PathParam("value") String value,
+                                   @PathParam("new_value") String new_value,
+                                   T object) {
+
+        String response = "uuid: "+ id + " name: " + name + " value: " + value + " new_value: " + new_value;
+
+        return Response.status(Status.OK).entity(response).build();
+    }
+
     @DELETE
     @Path("/{id}")
     @Transactional
