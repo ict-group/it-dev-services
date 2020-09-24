@@ -6,6 +6,7 @@ import dev.it.api.util.SlugUtils;
 import dev.it.services.management.AppConstants;
 import dev.it.services.model.Developer;
 import dev.it.services.model.pojo.CompanyEvent;
+import dev.it.services.model.pojo.PropertyValue;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
@@ -39,6 +40,14 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         return " surname asc";
     }
 
+    @Override
+    protected void removeProp(Developer developer, String name, String value) {
+
+        if(developer.properties != null){
+
+            developer.properties.removeIf(propertyValue -> propertyValue.name.equals(name));
+        }
+    }
 
     @GET
     @Transactional

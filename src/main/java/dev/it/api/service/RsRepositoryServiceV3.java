@@ -168,34 +168,6 @@ public abstract class RsRepositoryServiceV3<T extends PanacheEntityBase, U> exte
     protected void preDelete(U id) throws Exception {
     }
 
-    @PUT
-    @Transactional
-    @Path("{uuid}/updateprop/{name}/value/{value}/with/{new_value}")
-    public Response updateProperty(@PathParam("uuid") U id,
-                                   @PathParam("name") String name,
-                                   @PathParam("value") String value,
-                                   @PathParam("new_value") String new_value,
-                                   T object) {
-
-        String response = "uuid: "+ id + " name: " + name + " value: " + value + " new_value: " + new_value;
-
-        return Response.status(Status.OK).entity(response).build();
-    }
-
-    @DELETE
-    @Transactional
-    @Path("{uuid}/deleteprop/{name}/value/{value}/with/{new_value}")
-    public Response deleteProperty(@PathParam("uuid") U id,
-                                   @PathParam("name") String name,
-                                   @PathParam("value") String value,
-                                   @PathParam("new_value") String new_value,
-                                   T object) {
-
-        String response = "uuid: "+ id + " name: " + name + " value: " + value + " new_value: " + new_value;
-
-        return Response.status(Status.OK).entity(response).build();
-    }
-
     @DELETE
     @Path("/{id}")
     @Transactional
@@ -310,6 +282,89 @@ public abstract class RsRepositoryServiceV3<T extends PanacheEntityBase, U> exte
     }
 
     protected void postList(List<T> list) throws Exception {
+    }
+
+//    protected void preUpdateProp(U id, String name, String value, String new_value) throws Exception {
+//    }
+//
+//    @PUT
+//    @Transactional
+//    @Path("{uuid}/updateprop/{name}/value/{value}/with/{new_value}")
+//    public Response updateProperty(@PathParam("uuid") U id,
+//                                   @PathParam("name") String name,
+//                                   @PathParam("value") String value,
+//                                   @PathParam("new_value") String new_value) {
+//
+//        try {
+//            preUpdateProp(id, name, value, new_value);
+//        } catch (Exception e) {
+//            logger.errorv(e, "update:" + id);
+//            return jsonMessageResponse(Status.BAD_REQUEST, e);
+//        }
+//        try {
+////            entityManager.merge(object);
+//            return Response.status(Status.OK).entity(object).build();
+//        } catch (Exception e) {
+//            logger.errorv(e, "update:" + id);
+//            return jsonErrorMessageResponse(object);
+//        } finally {
+//            try {
+//                postUpdateProp(object);
+//            } catch (Exception e) {
+//                logger.errorv(e, "update:" + id);
+//            }
+//        }
+//    }
+//
+//    protected void postUpdateProp(T object) throws Exception {
+//    }
+
+
+    protected void preDeleteProp(U id, String name, String value) throws Exception {
+    }
+
+    @DELETE
+    @Transactional
+    @Path("{uuid}/deleteprop/{name}/value/{value}")
+    public Response deleteProperty(@PathParam("uuid") U id,
+                                   @PathParam("name") String name,
+                                   @PathParam("value") String value) {
+
+        logger.info("delete property at: " + id);
+
+        try {
+            preDeleteProp(id, name, value);
+        } catch (Exception e) {
+            logger.errorv(e, "delete property at: " + id);
+            return jsonMessageResponse(Status.BAD_REQUEST, e);
+        }
+        T t;
+        try {
+            t = find(id);
+            if (t == null) {
+                return handleObjectNotFoundRequest(id);
+            }
+        } catch (Exception e) {
+            return jsonMessageResponse(Status.BAD_REQUEST, e);
+        }
+        try {
+            removeProp(t, name, value);
+            entityManager.merge(t);
+            postDeleteProp(id, name, value);
+            return jsonMessageResponse(Status.NO_CONTENT, id);
+        } catch (NoResultException e) {
+            logger.errorv(e, "delete property at: " + id);
+            return jsonMessageResponse(Status.NOT_FOUND, id);
+        } catch (Exception e) {
+            logger.errorv(e, "delete property at: " + id);
+            return jsonErrorMessageResponse(e);
+        }
+    }
+
+    protected void removeProp(T t, String name, String value) {
+    }
+
+    protected void postDeleteProp(U id, String name, String value) throws Exception {
     }
 
     /**
