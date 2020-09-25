@@ -40,14 +40,12 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
     }
 
     @Override
-    protected Developer updateProp(Developer developer, String name, String value, String new_value) {
-        Query query = createUpdateQuery(developer, new_value);
+    protected void updateProp(String uuid, String name, String value, String new_value) {
+        Query query = createUpdateQuery(uuid, new_value);
         query.executeUpdate();
-
-        return developer;
     }
 
-    private Query createUpdateQuery(Developer developer, String new_value) {
+    private Query createUpdateQuery(String uuid, String new_value) {
         String newValueFormated = "'\"" + new_value + "\"'";
 
         String queryString = "WITH jsonstring as ( " +
@@ -61,7 +59,7 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
             "WHERE uuid = :uuid ";
 
         Query query = getEntityManager().createNativeQuery(queryString);
-        query.setParameter("uuid", developer.uuid);
+        query.setParameter("uuid", uuid);
 
         return query;
     }

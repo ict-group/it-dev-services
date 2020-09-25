@@ -304,21 +304,22 @@ public abstract class RsRepositoryServiceV3<T extends PanacheEntityBase, U> exte
             logger.errorv(e, "update property at: " + id);
             return jsonMessageResponse(Status.BAD_REQUEST, e);
         }
+
+        try {
+            updateProp(id, name, value, new_value);
+        } catch (Exception e) {
+            logger.errorv(e, "update property at: " + id);
+            return jsonErrorMessageResponse(e);
+        }
         T object;
         try {
             object = find(id);
             if (object == null) {
                 return handleObjectNotFoundRequest(id);
             }
-        } catch (Exception e) {
-            return jsonMessageResponse(Status.BAD_REQUEST, e);
-        }
-        try {
-            object = updateProp(object, name, value, new_value);
             return Response.status(Status.OK).entity(object).build();
         } catch (Exception e) {
-            logger.errorv(e, "update property at: " + id);
-            return jsonErrorMessageResponse(e);
+            return jsonMessageResponse(Status.BAD_REQUEST, e);
         }
         finally {
             try {
@@ -329,9 +330,7 @@ public abstract class RsRepositoryServiceV3<T extends PanacheEntityBase, U> exte
         }
     }
 
-    protected T updateProp(T t, String name, String value, String new_value) {
-
-        return t;
+    protected void updateProp(U id, String name, String value, String new_value) {
     }
 
     protected void postUpdateProp(U id, String name, String value, String new_value) throws Exception {
