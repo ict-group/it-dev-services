@@ -6,6 +6,7 @@ import dev.it.api.util.SlugUtils;
 import dev.it.services.management.AppConstants;
 import dev.it.services.model.Developer;
 import dev.it.services.model.pojo.CompanyEvent;
+import dev.it.services.model.pojo.PropertyValue;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
@@ -29,7 +30,6 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
     @Inject
     Event companyEvent;
 
-
     public DeveloperServiceRs() {
         super(Developer.class);
     }
@@ -39,6 +39,38 @@ public class DeveloperServiceRs extends RsRepositoryServiceV3<Developer, String>
         return " surname asc";
     }
 
+    @Override
+    protected void updateProp(String uuid, String name, String value, String new_value) {
+        Query query = createUpdateQuery(uuid, new_value);
+        query.executeUpdate();
+    }
+
+    private Query createUpdateQuery(String uuid, String new_value) {
+        String newValueFormated = "'\"" + new_value + "\"'";
+
+        String queryString = "WITH jsonstring as ( " +
+                "SELECT properties as path " +
+                "FROM developers, " +
+                     "jsonb_array_elements(properties) with ordinality arr(obj, index) " +
+                "WHERE obj->>'name' = 'hair_colour' AND uuid= :uuid) " +
+            "UPDATE developers " +
+            "SET properties = jsonb_set(jsonstring.path, '{0,value}',"+  newValueFormated +")" +" " +
+            "FROM jsonstring " +
+            "WHERE uuid = :uuid ";
+
+        Query query = getEntityManager().createNativeQuery(queryString);
+        query.setParameter("uuid", uuid);
+
+        return query;
+    }
+
+    @Override
+    protected void removeProp(Developer developer, String name, String value) {
+        if(developer.properties != null){
+
+            developer.properties.removeIf(propertyValue -> propertyValue.name.equals(name));
+        }
+    }
 
     @GET
     @Transactional
