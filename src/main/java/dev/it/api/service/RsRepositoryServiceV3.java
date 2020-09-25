@@ -10,6 +10,7 @@ import org.jboss.logging.Logger;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -313,8 +314,7 @@ public abstract class RsRepositoryServiceV3<T extends PanacheEntityBase, U> exte
             return jsonMessageResponse(Status.BAD_REQUEST, e);
         }
         try {
-            updateProp(object, name, value, new_value);
-            entityManager.merge(object);
+            object = updateProp(object, name, value, new_value);
             return Response.status(Status.OK).entity(object).build();
         } catch (Exception e) {
             logger.errorv(e, "update property at: " + id);
